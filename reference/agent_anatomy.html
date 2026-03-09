@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agent.py — Anatomy</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #0d1117;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    padding: 40px 20px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .page {
+    width: 900px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .title-block {
+    margin-bottom: 32px;
+  }
+
+  .title-block h1 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 28px;
+    color: #e6edf3;
+    letter-spacing: -0.5px;
+  }
+
+  .title-block p {
+    font-size: 12px;
+    color: #6e7681;
+    margin-top: 4px;
+    letter-spacing: 0.5px;
+  }
+
+  .diagram {
+    display: flex;
+    gap: 28px;
+    align-items: flex-start;
+  }
+
+  /* CODE COLUMN */
+  .code-column {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .code-block {
+    border-radius: 6px;
+    overflow: hidden;
+    border: 1px solid transparent;
+    transition: border-color 0.2s;
+    position: relative;
+  }
+
+  .code-block:hover {
+    border-color: var(--accent);
+  }
+
+  .code-header {
+    padding: 5px 12px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .code-header .dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--accent);
+    flex-shrink: 0;
+  }
+
+  .code-body {
+    padding: 10px 14px 12px;
+    font-size: 11.5px;
+    line-height: 1.7;
+    color: #c9d1d9;
+  }
+
+  .code-body .comment { color: #5c6e82; }
+  .code-body .keyword { color: #ff7b72; }
+  .code-body .fn { color: #d2a8ff; }
+  .code-body .string { color: #a5d6ff; }
+  .code-body .var { color: #ffa657; }
+  .code-body .builtin { color: #79c0ff; }
+  .code-body .indent { padding-left: 16px; }
+  .code-body .indent2 { padding-left: 32px; }
+
+  /* BLOCK THEMES */
+  .block-imports {
+    --accent: #58a6ff;
+    background: #161b22;
+    border-color: #21262d;
+  }
+  .block-imports .code-header { background: #1c2433; color: #58a6ff; }
+
+  .block-tool {
+    --accent: #3fb950;
+    background: #161b22;
+    border-color: #21262d;
+  }
+  .block-tool .code-header { background: #1a2b1e; color: #3fb950; }
+
+  .block-llm {
+    --accent: #d29922;
+    background: #161b22;
+    border-color: #21262d;
+  }
+  .block-llm .code-header { background: #272011; color: #d29922; }
+
+  .block-prompt {
+    --accent: #bc8cff;
+    background: #161b22;
+    border-color: #21262d;
+  }
+  .block-prompt .code-header { background: #1f1433; color: #bc8cff; }
+
+  .block-agent {
+    --accent: #f78166;
+    background: #161b22;
+    border-color: #21262d;
+  }
+  .block-agent .code-header { background: #2b1a18; color: #f78166; }
+
+  .block-executor {
+    --accent: #ff7b72;
+    background: #161b22;
+    border-color: #21262d;
+  }
+  .block-executor .code-header { background: #2b1a18; color: #ff7b72; }
+
+  .block-run {
+    --accent: #39d353;
+    background: #161b22;
+    border-color: #21262d;
+  }
+  .block-run .code-header { background: #162b1a; color: #39d353; }
+
+  /* LABELS COLUMN */
+  .labels-column {
+    width: 260px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding-top: 0;
+  }
+
+  .label-card {
+    border-radius: 6px;
+    padding: 10px 14px;
+    border-left: 3px solid var(--accent);
+    background: #161b22;
+  }
+
+  .label-card .label-name {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  .label-card .label-desc {
+    font-size: 10.5px;
+    color: #8b949e;
+    line-height: 1.5;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .label-imports { --accent: #58a6ff; }
+  .label-tool    { --accent: #3fb950; }
+  .label-llm     { --accent: #d29922; }
+  .label-prompt  { --accent: #bc8cff; }
+  .label-agent   { --accent: #f78166; }
+  .label-executor{ --accent: #ff7b72; }
+  .label-run     { --accent: #39d353; }
+
+  /* CONNECTOR LINES */
+  .connector {
+    display: flex;
+    align-items: center;
+    height: 6px;
+    margin: 0;
+  }
+
+  /* FLOW ARROW */
+  .flow {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 20px 0 8px;
+    padding: 10px 14px;
+    background: #161b22;
+    border-radius: 6px;
+    border: 1px dashed #30363d;
+  }
+
+  .flow-label {
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    color: #6e7681;
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+
+  .flow-steps {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .flow-step {
+    font-size: 10.5px;
+    color: #c9d1d9;
+    background: #21262d;
+    padding: 3px 8px;
+    border-radius: 4px;
+  }
+
+  .flow-arrow {
+    color: #6e7681;
+    font-size: 12px;
+  }
+
+  /* SPACER between blocks */
+  .gap-sm { height: 6px; }
+  .gap-md { height: 14px; }
+
+  .section-divider {
+    height: 1px;
+    background: #21262d;
+    margin: 8px 0;
+  }
+
+  /* DEPENDENCY CHAIN */
+  .dep-chain {
+    margin-top: 28px;
+    background: #161b22;
+    border: 1px solid #21262d;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .dep-chain-header {
+    background: #1c2028;
+    padding: 8px 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 1px solid #21262d;
+  }
+
+  .dep-chain-header .dep-title {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #8b949e;
+  }
+
+  .dep-chain-body {
+    padding: 14px 16px;
+    display: flex;
+    gap: 0;
+    align-items: stretch;
+  }
+
+  .dep-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    flex: 1;
+  }
+
+  .dep-row {
+    display: flex;
+    align-items: center;
+    height: 28px;
+  }
+
+  .dep-name {
+    width: 105px;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    flex-shrink: 0;
+  }
+
+  .dep-arrow {
+    font-size: 11px;
+    color: #30363d;
+    margin-right: 10px;
+    flex-shrink: 0;
+  }
+
+  .dep-note {
+    font-size: 10.5px;
+    color: #8b949e;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .dep-tag {
+    font-size: 10px;
+    padding: 2px 7px;
+    border-radius: 4px;
+    font-weight: 600;
+  }
+
+  .dep-free {
+    color: #3fb950;
+    background: #1a2b1e;
+    border: 1px solid #2d4a33;
+  }
+
+  .dep-requires {
+    color: #f78166;
+    background: #2b1a18;
+    border: 1px solid #4a2d28;
+  }
+
+  .dep-separator {
+    width: 1px;
+    background: #21262d;
+    margin: 0 18px;
+    flex-shrink: 0;
+  }
+
+  .dep-legend {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    justify-content: center;
+    min-width: 155px;
+  }
+
+  .dep-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 10.5px;
+    color: #6e7681;
+  }
+
+  .dep-legend-swatch {
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="title-block">
+    <h1>agent.py — Anatomy</h1>
+    <p>Every LangChain agent is composed of these seven parts, in this order.</p>
+  </div>
+
+  <div class="diagram">
+
+    <!-- CODE COLUMN -->
+    <div class="code-column">
+
+      <!-- IMPORTS -->
+      <div class="code-block block-imports">
+        <div class="code-header"><span class="dot"></span>Imports</div>
+        <div class="code-body">
+          <div><span class="keyword">from</span> <span class="builtin">langchain_openai</span> <span class="keyword">import</span> <span class="fn">ChatOpenAI</span></div>
+          <div><span class="keyword">from</span> <span class="builtin">langchain.agents</span> <span class="keyword">import</span> <span class="fn">AgentExecutor</span></div>
+          <div><span class="keyword">from</span> <span class="builtin">langchain.agents</span> <span class="keyword">import</span> <span class="fn">create_tool_calling_agent</span></div>
+          <div><span class="keyword">from</span> <span class="builtin">langchain_core.tools</span> <span class="keyword">import</span> <span class="fn">tool</span></div>
+          <div><span class="keyword">from</span> <span class="builtin">langchain_core.prompts</span> <span class="keyword">import</span> <span class="fn">ChatPromptTemplate</span></div>
+        </div>
+      </div>
+
+      <div class="gap-md"></div>
+
+      <!-- TOOL -->
+      <div class="code-block block-tool">
+        <div class="code-header"><span class="dot"></span>Tool Definition</div>
+        <div class="code-body">
+          <div><span class="fn">@tool</span></div>
+          <div><span class="keyword">def</span> <span class="fn">my_tool</span>(<span class="var">input</span>: <span class="builtin">str</span>) -> <span class="builtin">str</span>:</div>
+          <div class="indent"><span class="string">"""</span></div>
+          <div class="indent"><span class="string">What this tool does.</span></div>
+          <div class="indent"><span class="string">Use this when the user asks about X.</span></div>
+          <div class="indent"><span class="string">Example input: 'some example'</span></div>
+          <div class="indent"><span class="string">"""</span></div>
+          <div class="indent"><span class="comment"># tool logic here</span></div>
+          <div class="indent"><span class="keyword">return</span> <span class="fn">result</span></div>
+        </div>
+      </div>
+
+      <div class="gap-md"></div>
+
+      <!-- LLM -->
+      <div class="code-block block-llm">
+        <div class="code-header"><span class="dot"></span>LLM</div>
+        <div class="code-body">
+          <div><span class="var">llm</span> = <span class="fn">ChatOpenAI</span>(</div>
+          <div class="indent"><span class="var">model</span>=<span class="string">"model-name"</span>,</div>
+          <div class="indent"><span class="var">base_url</span>=<span class="string">"http://127.0.0.1:8080/v1"</span>,</div>
+          <div class="indent"><span class="var">api_key</span>=<span class="string">"not-needed"</span>,</div>
+          <div class="indent"><span class="var">temperature</span>=<span class="string">0</span>,</div>
+          <div>)</div>
+        </div>
+      </div>
+
+      <div class="gap-md"></div>
+
+      <!-- PROMPT -->
+      <div class="code-block block-prompt">
+        <div class="code-header"><span class="dot"></span>Prompt Template</div>
+        <div class="code-body">
+          <div><span class="var">prompt</span> = <span class="fn">ChatPromptTemplate</span>.<span class="fn">from_messages</span>([</div>
+          <div class="indent">(<span class="string">"system"</span>, <span class="string">"You are a helpful assistant..."</span>),</div>
+          <div class="indent">(<span class="string">"placeholder"</span>, <span class="string">"{history}"</span>),       <span class="comment"># optional memory</span></div>
+          <div class="indent">(<span class="string">"human"</span>, <span class="string">"{input}"</span>),               <span class="comment"># user question</span></div>
+          <div class="indent">(<span class="string">"placeholder"</span>, <span class="string">"{agent_scratchpad}"</span>), <span class="comment"># reasoning loop</span></div>
+          <div>])</div>
+        </div>
+      </div>
+
+      <div class="gap-md"></div>
+
+      <!-- AGENT -->
+      <div class="code-block block-agent">
+        <div class="code-header"><span class="dot"></span>Agent</div>
+        <div class="code-body">
+          <div><span class="var">tools</span> = [<span class="fn">my_tool</span>]</div>
+          <div>&nbsp;</div>
+          <div><span class="var">agent</span> = <span class="fn">create_tool_calling_agent</span>(</div>
+          <div class="indent"><span class="var">llm</span>=<span class="fn">llm</span>,</div>
+          <div class="indent"><span class="var">tools</span>=<span class="fn">tools</span>,</div>
+          <div class="indent"><span class="var">prompt</span>=<span class="fn">prompt</span>,</div>
+          <div>)</div>
+        </div>
+      </div>
+
+      <div class="gap-md"></div>
+
+      <!-- EXECUTOR -->
+      <div class="code-block block-executor">
+        <div class="code-header"><span class="dot"></span>Agent Executor</div>
+        <div class="code-body">
+          <div><span class="var">agent_executor</span> = <span class="fn">AgentExecutor</span>(</div>
+          <div class="indent"><span class="var">agent</span>=<span class="fn">agent</span>,</div>
+          <div class="indent"><span class="var">tools</span>=<span class="fn">tools</span>,</div>
+          <div class="indent"><span class="var">verbose</span>=<span class="keyword">True</span>,</div>
+          <div class="indent"><span class="var">max_iterations</span>=<span class="string">5</span>,</div>
+          <div>)</div>
+        </div>
+      </div>
+
+      <div class="gap-md"></div>
+
+      <!-- RUN -->
+      <div class="code-block block-run">
+        <div class="code-header"><span class="dot"></span>Invocation</div>
+        <div class="code-body">
+          <div><span class="var">result</span> = <span class="fn">agent_executor</span>.<span class="fn">invoke</span>({</div>
+          <div class="indent"><span class="string">"input"</span>: <span class="string">"Your question here"</span></div>
+          <div>})</div>
+          <div>&nbsp;</div>
+          <div><span class="fn">print</span>(<span class="var">result</span>[<span class="string">"output"</span>])</div>
+        </div>
+      </div>
+
+      <!-- FLOW -->
+      <div class="flow">
+        <span class="flow-label">Loop</span>
+        <div class="flow-steps">
+          <span class="flow-step">Reason</span>
+          <span class="flow-arrow">→</span>
+          <span class="flow-step">Call Tool?</span>
+          <span class="flow-arrow">→</span>
+          <span class="flow-step">Observe Result</span>
+          <span class="flow-arrow">→</span>
+          <span class="flow-step">Reason Again</span>
+          <span class="flow-arrow">→</span>
+          <span class="flow-step">Final Answer</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- LABELS COLUMN -->
+    <div class="labels-column">
+
+      <div class="label-card label-imports">
+        <div class="label-name">Imports</div>
+        <div class="label-desc">Bring in LangChain components. One import per capability — LLM, agent builder, tool decorator, prompt template.</div>
+      </div>
+
+      <div class="gap-md"></div>
+
+      <div class="label-card label-tool">
+        <div class="label-name">Tool Definition</div>
+        <div class="label-desc">A Python function the LLM can call. The <strong style="color:#3fb950">docstring</strong> tells the model what it does and when to use it. Can have multiple tools.</div>
+      </div>
+
+      <div class="gap-md"></div>
+
+      <div class="label-card label-llm">
+        <div class="label-name">LLM</div>
+        <div class="label-desc">The brain. Reads the prompt, decides whether to call a tool or answer directly. Points at your local llama-server via base_url.</div>
+      </div>
+
+      <div class="gap-md"></div>
+
+      <div class="label-card label-prompt">
+        <div class="label-name">Prompt Template</div>
+        <div class="label-desc">Four slots:<br>
+          <span style="color:#bc8cff">system</span> — agent's personality &amp; rules<br>
+          <span style="color:#bc8cff">{history}</span> — past conversation (memory)<br>
+          <span style="color:#bc8cff">{input}</span> — the user's question<br>
+          <span style="color:#bc8cff">{agent_scratchpad}</span> — mid-loop reasoning
+        </div>
+      </div>
+
+      <div class="gap-md"></div>
+
+      <div class="label-card label-agent">
+        <div class="label-name">Agent</div>
+        <div class="label-desc">Wires LLM + tools + prompt into a single runnable. Not yet executable on its own — just the configuration.</div>
+      </div>
+
+      <div class="gap-md"></div>
+
+      <div class="label-card label-executor">
+        <div class="label-name">Agent Executor</div>
+        <div class="label-desc">The runtime loop. Calls the agent, runs any tools it requests, feeds results back, repeats until done. max_iterations prevents runaway loops.</div>
+      </div>
+
+      <div class="gap-md"></div>
+
+      <div class="label-card label-run">
+        <div class="label-name">Invocation</div>
+        <div class="label-desc">Starts the loop with a question. Returns a dict — the final answer is always in result["output"].</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- DEPENDENCY CHAIN -->
+  <div class="dep-chain">
+    <div class="dep-chain-header">
+      <span class="dep-title">Dependency Chain — why this order is required</span>
+    </div>
+    <div class="dep-chain-body">
+      <div class="dep-rows">
+
+        <div class="dep-row">
+          <div class="dep-name" style="color:#3fb950">Tool</div>
+          <div class="dep-arrow">←</div>
+          <div class="dep-note"><span class="dep-tag dep-free">no dependencies</span> define in any order</div>
+        </div>
+
+        <div class="dep-row">
+          <div class="dep-name" style="color:#d29922">LLM</div>
+          <div class="dep-arrow">←</div>
+          <div class="dep-note"><span class="dep-tag dep-free">no dependencies</span> define in any order</div>
+        </div>
+
+        <div class="dep-row">
+          <div class="dep-name" style="color:#bc8cff">Prompt</div>
+          <div class="dep-arrow">←</div>
+          <div class="dep-note"><span class="dep-tag dep-free">no dependencies</span> define in any order</div>
+        </div>
+
+        <div class="dep-row">
+          <div class="dep-name" style="color:#f78166">Agent</div>
+          <div class="dep-arrow">←</div>
+          <div class="dep-note">
+            <span class="dep-tag dep-requires">requires</span>
+            <span style="color:#3fb950">Tool</span>
+            <span style="color:#30363d">+</span>
+            <span style="color:#d29922">LLM</span>
+            <span style="color:#30363d">+</span>
+            <span style="color:#bc8cff">Prompt</span>
+            <span style="color:#30363d; margin-left:4px">must exist first</span>
+          </div>
+        </div>
+
+        <div class="dep-row">
+          <div class="dep-name" style="color:#ff7b72">Executor</div>
+          <div class="dep-arrow">←</div>
+          <div class="dep-note">
+            <span class="dep-tag dep-requires">requires</span>
+            <span style="color:#f78166">Agent</span>
+            <span style="color:#30363d">+</span>
+            <span style="color:#3fb950">Tools</span>
+            <span style="color:#30363d; margin-left:4px">must exist first</span>
+          </div>
+        </div>
+
+        <div class="dep-row">
+          <div class="dep-name" style="color:#39d353">Invocation</div>
+          <div class="dep-arrow">←</div>
+          <div class="dep-note">
+            <span class="dep-tag dep-requires">requires</span>
+            <span style="color:#ff7b72">Executor</span>
+            <span style="color:#30363d; margin-left:4px">must exist first</span>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="dep-separator"></div>
+
+      <div class="dep-legend">
+        <div class="dep-legend-item">
+          <div class="dep-legend-swatch" style="background:#1a2b1e; border:1px solid #2d4a33;"></div>
+          <span style="color:#3fb950">No dependencies</span> — order is flexible
+        </div>
+        <div class="dep-legend-item">
+          <div class="dep-legend-swatch" style="background:#2b1a18; border:1px solid #4a2d28;"></div>
+          <span style="color:#f78166">Requires</span> — must come after its dependencies
+        </div>
+        <div class="dep-legend-item" style="margin-top:4px; color:#5c6e82; font-size:10px; line-height:1.5;">
+          Tool, LLM, and Prompt are<br>independent of each other.<br>Only Agent and below are<br>strictly ordered.
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
