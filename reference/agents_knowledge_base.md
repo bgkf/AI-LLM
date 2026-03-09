@@ -1,37 +1,4 @@
-# AI Agents Course — Local Knowledge Base
-
-## Course Info
-This is Lesson 2 of the AI Agents with LangChain course.
-The course is taught using Qwen3 Coder running locally via llama.cpp.
-The student completed Lesson 1 successfully on the first attempt.
-
-## My LLM Setup
-- Model: Qwen3 Coder (GGUF format)
-- Runtime: llama.cpp (llama-server)
-- Context window: 32768 tokens
-- Host: 127.0.0.1, Port: 8080
-- API key: not required (local)
-
-## Frameworks I Have Looked At
-- LangChain: main framework for this course (MIT license)
-- LangGraph: advanced stateful agents, made by LangChain team
-- CrewAI: multi-agent collaboration
-- Pydantic AI: type-safe, minimal abstractions
-- Smolagents: code-first agents from HuggingFace
-
-## Package Manager
-Using pip3 with a virtual environment (or uv as an alternative).
-Virtual environment name: agents-course
-
-## Lessons Completed
-- Lesson 1: Simple agent with one tool (calculator). DONE.
-- Lesson 2: Agent with two tools (web search + file reader). DONE.
-- Lesson 3: Memory — short-term and persistent. DONE.
-- Lesson 4: Custom tools — all three patterns. DONE.
-- Lesson 5: Streaming — real time terminal output. DONE.
-- Lesson 6: Failure modes — errors, loops, bad output. IN PROGRESS.
-
----
+# AI Agents — Knowledge Base
 
 ## Python Project Configuration
 
