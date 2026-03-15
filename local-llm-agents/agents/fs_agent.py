@@ -1,10 +1,11 @@
 import json
 from openai import OpenAI
+from shared.config import config
 from shared.tools import filesystem_tools, execute_tool
 
-client = OpenAI(base_url="http://localhost:8080/v1", api_key="none")
+client = OpenAI(base_url=f"{config['llama_server_url']}/v1", api_key="none")
 
-ALLOWED_DIR = "/path/to/your/directory"
+ALLOWED_DIR = config["allowed_dir"]
 
 # --- Agentic loop ---
 def run(messages):
@@ -41,7 +42,7 @@ def run(messages):
 
 
 if __name__ == "__main__":
-    print(f"Agent ready. Talking to LLM at {client.base_url}")
+    print(f"Agent ready. Talking to LLM at {config['llama_server_url']}")
     print(f"Filesystem access limited to: {ALLOWED_DIR}")
     print("Type 'exit' to quit.\n")
 
@@ -49,6 +50,7 @@ if __name__ == "__main__":
         {
             "role": "system",
             "content": (
+                f"/no-think\n"
                 f"You are a helpful assistant with access to the local filesystem. "
                 f"You may only access files within: {ALLOWED_DIR}\n"
                 f"Use the provided tools to list directories, read files, and write files."

@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Deep Sea Creature Database</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Crimson+Pro:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --void: #020810;
+      --abyss: #040f1e;
+      --deep: #071628;
+      --mid: #0a1f38;
+      --surface: #0d2645;
+      --glow-blue: #00aaff;
+      --glow-cyan: #00ffee;
+      --glow-green: #00ff88;
+      --bio-gold: #ffd166;
+      --text-primary: #c8e6f7;
+      --text-secondary: #6a9ab8;
+      --text-dim: #2e5470;
+      --border: rgba(0, 170, 255, 0.12);
+      --border-bright: rgba(0, 170, 255, 0.35);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--void);
+      color: var(--text-primary);
+      font-family: 'Crimson Pro', Georgia, serif;
+      font-size: 17px;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* animated background */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 50% at 20% 80%, rgba(0,80,160,0.15) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 40% at 80% 20%, rgba(0,40,100,0.12) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 60% at 50% 100%, rgba(0,120,200,0.08) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* floating particles */
+    .particles {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+    .particle {
+      position: absolute;
+      border-radius: 50%;
+      background: var(--glow-cyan);
+      opacity: 0;
+      animation: drift linear infinite;
+    }
+    @keyframes drift {
+      0%   { opacity: 0; transform: translateY(100vh) translateX(0); }
+      10%  { opacity: 0.6; }
+      90%  { opacity: 0.3; }
+      100% { opacity: 0; transform: translateY(-10vh) translateX(30px); }
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem 4rem;
+    }
+
+    /* header */
+    header {
+      text-align: center;
+      padding: 4rem 0 3rem;
+      position: relative;
+    }
+    header::after {
+      content: '';
+      display: block;
+      width: 200px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--glow-blue), transparent);
+      margin: 2rem auto 0;
+    }
+    .header-eyebrow {
+      font-family: 'Cinzel', serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.4em;
+      color: var(--glow-cyan);
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+      opacity: 0.8;
+    }
+    h1 {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 600;
+      color: var(--text-primary);
+      letter-spacing: 0.05em;
+      line-height: 1.1;
+      text-shadow: 0 0 60px rgba(0,170,255,0.4);
+    }
+    .header-sub {
+      font-size: 1rem;
+      color: var(--text-secondary);
+      margin-top: 0.75rem;
+      font-style: italic;
+      font-weight: 300;
+    }
+
+    /* stat cards */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1px;
+      margin-bottom: 3rem;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .stat-card {
+      background: var(--abyss);
+      padding: 1.5rem;
+      text-align: center;
+      transition: background 0.3s;
+    }
+    .stat-card:hover { background: var(--deep); }
+    .stat-value {
+      font-family: 'Cinzel', serif;
+      font-size: 2.5rem;
+      font-weight: 600;
+      color: var(--glow-cyan);
+      text-shadow: 0 0 30px rgba(0,255,238,0.5);
+      line-height: 1;
+    }
+    .stat-label {
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      margin-top: 0.5rem;
+    }
+
+    /* filters */
+    .filters {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .filter-label {
+      font-size: 0.7rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      white-space: nowrap;
+    }
+    .filter-group {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+    .filter-btn {
+      background: transparent;
+      border: 1px solid var(--border-bright);
+      color: var(--text-secondary);
+      padding: 0.4rem 1rem;
+      font-family: 'Crimson Pro', serif;
+      font-size: 0.85rem;
+      letter-spacing: 0.05em;
+      cursor: pointer;
+      transition: all 0.2s;
+      border-radius: 1px;
+    }
+    .filter-btn:hover {
+      border-color: var(--glow-cyan);
+      color: var(--glow-cyan);
+      background: rgba(0,255,238,0.05);
+    }
+    .filter-btn.active {
+      background: rgba(0,170,255,0.15);
+      border-color: var(--glow-blue);
+      color: var(--glow-blue);
+    }
+    .search-input {
+      background: var(--abyss);
+      border: 1px solid var(--border-bright);
+      color: var(--text-primary);
+      padding: 0.4rem 1rem;
+      font-family: 'Crimson Pro', serif;
+      font-size: 0.95rem;
+      border-radius: 1px;
+      outline: none;
+      flex: 1;
+      min-width: 200px;
+      transition: border-color 0.2s;
+    }
+    .search-input::placeholder { color: var(--text-dim); }
+    .search-input:focus { border-color: var(--glow-blue); }
+
+    /* table */
+    .table-wrap {
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      overflow: hidden;
+      margin-bottom: 3rem;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    thead {
+      background: var(--deep);
+    }
+    th {
+      font-family: 'Cinzel', serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      padding: 1rem 1.2rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border-bright);
+      white-space: nowrap;
+      cursor: pointer;
+      user-select: none;
+    }
+    th:hover { color: var(--glow-cyan); }
+    tbody tr {
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: rgba(0,170,255,0.06); }
+    tbody tr.selected { background: rgba(0,170,255,0.1); }
+    td {
+      padding: 0.9rem 1.2rem;
+      font-size: 0.95rem;
+      color: var(--text-primary);
+      vertical-align: middle;
+    }
+    .td-name { font-weight: 400; }
+    .td-sci {
+      font-style: italic;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+    .td-depth {
+      font-family: 'Cinzel', serif;
+      font-size: 0.8rem;
+      color: var(--glow-blue);
+      white-space: nowrap;
+    }
+    .bio-badge {
+      display: inline-block;
+      padding: 0.15rem 0.6rem;
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      border-radius: 1px;
+      border: 1px solid;
+    }
+    .bio-yes {
+      background: rgba(255,209,102,0.1);
+      border-color: rgba(255,209,102,0.4);
+      color: var(--bio-gold);
+    }
+    .bio-no {
+      background: rgba(46,84,112,0.2);
+      border-color: var(--text-dim);
+      color: var(--text-dim);
+    }
+    .zone-tag {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      letter-spacing: 0.05em;
+    }
+
+    /* detail card */
+    .detail-card {
+      background: var(--abyss);
+      border: 1px solid var(--border-bright);
+      border-radius: 2px;
+      padding: 2rem 2.5rem;
+      margin-bottom: 3rem;
+      display: none;
+      animation: fadeIn 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .detail-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--glow-cyan), var(--glow-blue), transparent);
+    }
+    .detail-card.visible { display: block; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .detail-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1.5rem;
+      gap: 1rem;
+    }
+    .detail-name {
+      font-family: 'Cinzel', serif;
+      font-size: 1.6rem;
+      color: var(--text-primary);
+      line-height: 1.2;
+    }
+    .detail-sci {
+      font-style: italic;
+      color: var(--text-secondary);
+      font-size: 1rem;
+      margin-top: 0.25rem;
+      font-weight: 300;
+    }
+    .detail-close {
+      background: transparent;
+      border: 1px solid var(--border-bright);
+      color: var(--text-secondary);
+      width: 2rem;
+      height: 2rem;
+      cursor: pointer;
+      font-size: 1rem;
+      flex-shrink: 0;
+      transition: all 0.2s;
+      border-radius: 1px;
+    }
+    .detail-close:hover {
+      border-color: var(--glow-cyan);
+      color: var(--glow-cyan);
+    }
+    .detail-meta {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+      padding: 1.5rem;
+      background: rgba(0,0,0,0.2);
+      border: 1px solid var(--border);
+    }
+    .meta-item {}
+    .meta-key {
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 0.3rem;
+    }
+    .meta-val {
+      font-family: 'Cinzel', serif;
+      font-size: 1rem;
+      color: var(--glow-cyan);
+    }
+    .detail-desc {
+      font-size: 1.05rem;
+      line-height: 1.7;
+      color: var(--text-secondary);
+      font-weight: 300;
+      font-style: italic;
+      border-left: 2px solid var(--border-bright);
+      padding-left: 1.25rem;
+    }
+
+    /* depth chart */
+    .section-title {
+      font-family: 'Cinzel', serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .charts-row {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 2rem;
+      margin-bottom: 3rem;
+    }
+    @media (max-width: 700px) { .charts-row { grid-template-columns: 1fr; } }
+    .chart-panel {
+      background: var(--abyss);
+      border: 1px solid var(--border);
+      padding: 1.5rem;
+    }
+
+    /* depth bars */
+    .depth-list { display: flex; flex-direction: column; gap: 0.6rem; }
+    .depth-row { display: flex; align-items: center; gap: 0.75rem; }
+    .depth-row-name {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      width: 130px;
+      flex-shrink: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .depth-bar-wrap {
+      flex: 1;
+      height: 6px;
+      background: rgba(0,0,0,0.4);
+      border-radius: 1px;
+      overflow: visible;
+      position: relative;
+    }
+    .depth-bar {
+      position: absolute;
+      height: 100%;
+      border-radius: 1px;
+      background: linear-gradient(90deg, var(--glow-blue), var(--glow-cyan));
+      box-shadow: 0 0 8px rgba(0,255,238,0.4);
+      transition: width 0.8s cubic-bezier(0.16,1,0.3,1);
+    }
+    .depth-label {
+      font-family: 'Cinzel', serif;
+      font-size: 0.65rem;
+      color: var(--text-dim);
+      width: 80px;
+      text-align: right;
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
+
+    /* bio donut */
+    .bio-chart {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1.5rem;
+      height: 100%;
+    }
+    .donut-wrap { position: relative; width: 120px; height: 120px; }
+    .donut-wrap svg { transform: rotate(-90deg); }
+    .donut-label {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+    .donut-pct {
+      font-family: 'Cinzel', serif;
+      font-size: 1.6rem;
+      color: var(--bio-gold);
+      text-shadow: 0 0 20px rgba(255,209,102,0.5);
+      line-height: 1;
+    }
+    .donut-sub {
+      font-size: 0.6rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-top: 0.2rem;
+    }
+    .bio-legend { display: flex; flex-direction: column; gap: 0.5rem; width: 100%; }
+    .legend-row {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+    }
+    .legend-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    /* zone bars */
+    .zone-list { display: flex; flex-direction: column; gap: 0.75rem; margin-top: 0.5rem; }
+    .zone-row {}
+    .zone-name {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      margin-bottom: 0.3rem;
+      display: flex;
+      justify-content: space-between;
+    }
+    .zone-count { color: var(--glow-blue); font-family: 'Cinzel', serif; }
+    .zone-bar-bg {
+      height: 4px;
+      background: rgba(0,0,0,0.4);
+      border-radius: 1px;
+      overflow: hidden;
+    }
+    .zone-bar-fill {
+      height: 100%;
+      border-radius: 1px;
+      background: linear-gradient(90deg, var(--glow-blue), rgba(0,170,255,0.4));
+      transition: width 0.8s cubic-bezier(0.16,1,0.3,1);
+    }
+
+    .empty {
+      text-align: center;
+      padding: 3rem;
+      color: var(--text-dim);
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+
+<div class="particles" id="particles"></div>
+
+<div class="container">
+  <header>
+    <div class="header-eyebrow">Hadal Research Institute · Field Database</div>
+    <h1>Deep Sea Creature Database</h1>
+    <p class="header-sub">Cataloguing life from the twilight zone to the abyss</p>
+  </header>
+
+  <!-- stats -->
+  <div class="stats-grid" id="statsGrid">
+    <div class="stat-card"><div class="stat-value" id="statTotal">—</div><div class="stat-label">Species Catalogued</div></div>
+    <div class="stat-card"><div class="stat-value" id="statBio">—</div><div class="stat-label">Bioluminescent</div></div>
+    <div class="stat-card"><div class="stat-value" id="statBioPct">—</div><div class="stat-label">Glow Rate</div></div>
+    <div class="stat-card"><div class="stat-value" id="statMaxDepth">—</div><div class="stat-label">Max Depth (m)</div></div>
+  </div>
+
+  <!-- filters -->
+  <div class="filters">
+    <span class="filter-label">Filter —</span>
+    <div class="filter-group">
+      <button class="filter-btn active" data-bio="all">All</button>
+      <button class="filter-btn" data-bio="true">Bioluminescent</button>
+      <button class="filter-btn" data-bio="false">Non-luminescent</button>
+    </div>
+    <div class="filter-group" id="zoneFilters"></div>
+    <input class="search-input" id="searchInput" type="text" placeholder="Search by name or zone…" />
+  </div>
+
+  <!-- detail card -->
+  <div class="detail-card" id="detailCard">
+    <div class="detail-header">
+      <div>
+        <div class="detail-name" id="dName"></div>
+        <div class="detail-sci" id="dSci"></div>
+      </div>
+      <button class="detail-close" id="detailClose">✕</button>
+    </div>
+    <div class="detail-meta" id="dMeta"></div>
+    <p class="detail-desc" id="dDesc"></p>
+  </div>
+
+  <!-- table -->
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Scientific Name</th>
+          <th>Depth Range</th>
+          <th>Size</th>
+          <th>Bioluminescent</th>
+          <th>Zone</th>
+          <th>Discovered</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+  </div>
+
+  <!-- charts -->
+  <div class="charts-row">
+    <div class="chart-panel">
+      <div class="section-title">Depth Range by Species</div>
+      <div class="depth-list" id="depthChart"></div>
+    </div>
+    <div class="chart-panel">
+      <div class="section-title">Bioluminescence</div>
+      <div class="bio-chart">
+        <div class="donut-wrap">
+          <svg width="120" height="120" viewBox="0 0 120 120">
+            <circle cx="60" cy="60" r="48" fill="none" stroke="rgba(0,0,0,0.4)" stroke-width="12"/>
+            <circle cx="60" cy="60" r="48" fill="none" stroke="var(--bio-gold)" stroke-width="12"
+              stroke-dasharray="301.59" stroke-dashoffset="301.59"
+              id="donutArc" stroke-linecap="butt"/>
+          </svg>
+          <div class="donut-label">
+            <div class="donut-pct" id="donutPct">0%</div>
+            <div class="donut-sub">glow</div>
+          </div>
+        </div>
+        <div class="bio-legend">
+          <div class="legend-row"><div class="legend-dot" style="background:var(--bio-gold)"></div><span id="legendBio">— bioluminescent</span></div>
+          <div class="legend-row"><div class="legend-dot" style="background:var(--text-dim)"></div><span id="legendNon">— non-luminescent</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="chart-panel" style="margin-bottom:3rem">
+    <div class="section-title">Species by Habitat Zone</div>
+    <div class="zone-list" id="zoneChart"></div>
+  </div>
+</div>
+
+<script>
+  const API = 'http://localhost:8000';
+  let allCreatures = [];
+  let activeFilters = { bio: 'all', zone: 'all', search: '' };
+  let selectedId = null;
+
+  // particles
+  const pContainer = document.getElementById('particles');
+  for (let i = 0; i < 25; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    const size = Math.random() * 2.5 + 0.5;
+    p.style.cssText = `
+      width:${size}px; height:${size}px;
+      left:${Math.random()*100}%;
+      animation-duration:${Math.random()*20+15}s;
+      animation-delay:${Math.random()*20}s;
+      opacity:0;
+    `;
+    pContainer.appendChild(p);
+  }
+
+  async function fetchAll() {
+    try {
+      const [crRes, stRes] = await Promise.all([
+        fetch(`${API}/creatures`),
+        fetch(`${API}/stats`)
+      ]);
+      allCreatures = await crRes.json();
+      const stats = await stRes.json();
+      renderStats(stats);
+      renderZoneFilters(stats.zones);
+      renderZoneChart(stats.zones);
+      renderDepthChart(allCreatures);
+      renderDonut(stats.bioluminescent_pct, stats.bioluminescent_count, stats.total - stats.bioluminescent_count);
+      renderTable(allCreatures);
+    } catch(e) {
+      document.getElementById('tableBody').innerHTML =
+        '<tr><td colspan="7" class="empty">Could not connect to API at ' + API + ' — is the FastAPI server running?</td></tr>';
+    }
+  }
+
+  function renderStats(s) {
+    document.getElementById('statTotal').textContent = s.total;
+    document.getElementById('statBio').textContent = s.bioluminescent_count;
+    document.getElementById('statBioPct').textContent = s.bioluminescent_pct + '%';
+    const maxDepth = Math.max(...allCreatures.map(c => c.depth_max));
+    document.getElementById('statMaxDepth').textContent = maxDepth.toLocaleString();
+  }
+
+  function renderZoneFilters(zones) {
+    const wrap = document.getElementById('zoneFilters');
+    Object.keys(zones).forEach(z => {
+      const btn = document.createElement('button');
+      btn.className = 'filter-btn';
+      btn.dataset.zone = z;
+      btn.textContent = z;
+      btn.addEventListener('click', () => {
+        activeFilters.zone = activeFilters.zone === z ? 'all' : z;
+        wrap.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        if (activeFilters.zone !== 'all') btn.classList.add('active');
+        applyFilters();
+      });
+      wrap.appendChild(btn);
+    });
+  }
+
+  function renderTable(creatures) {
+    const tbody = document.getElementById('tableBody');
+    if (!creatures.length) {
+      tbody.innerHTML = '<tr><td colspan="7" class="empty">No creatures match the current filters.</td></tr>';
+      return;
+    }
+    tbody.innerHTML = creatures.map(c => `
+      <tr data-id="${c.id}" class="${selectedId === c.id ? 'selected' : ''}">
+        <td class="td-name">${c.name}</td>
+        <td class="td-sci">${c.scientific_name}</td>
+        <td class="td-depth">${c.depth_min.toLocaleString()} – ${c.depth_max.toLocaleString()} m</td>
+        <td>${c.size_cm >= 100 ? (c.size_cm/100).toFixed(1)+'m' : c.size_cm+'cm'}</td>
+        <td><span class="bio-badge ${c.bioluminescent ? 'bio-yes' : 'bio-no'}">${c.bioluminescent ? 'Yes' : 'No'}</span></td>
+        <td class="zone-tag">${c.habitat_zone}</td>
+        <td>${c.discovery_year}</td>
+      </tr>
+    `).join('');
+    tbody.querySelectorAll('tr[data-id]').forEach(row => {
+      row.addEventListener('click', () => showDetail(parseInt(row.dataset.id)));
+    });
+  }
+
+  function showDetail(id) {
+    const c = allCreatures.find(x => x.id === id);
+    if (!c) return;
+    selectedId = id;
+    document.querySelectorAll('tbody tr').forEach(r => r.classList.toggle('selected', parseInt(r.dataset.id) === id));
+    document.getElementById('dName').textContent = c.name;
+    document.getElementById('dSci').textContent = c.scientific_name;
+    document.getElementById('dDesc').textContent = c.description;
+    document.getElementById('dMeta').innerHTML = [
+      ['Depth Range', `${c.depth_min.toLocaleString()} – ${c.depth_max.toLocaleString()} m`],
+      ['Size', c.size_cm >= 100 ? (c.size_cm/100).toFixed(1)+' m' : c.size_cm+' cm'],
+      ['Habitat Zone', c.habitat_zone],
+      ['Discovered', c.discovery_year],
+      ['Bioluminescent', c.bioluminescent ? 'Yes' : 'No'],
+    ].map(([k,v]) => `<div class="meta-item"><div class="meta-key">${k}</div><div class="meta-val">${v}</div></div>`).join('');
+    const card = document.getElementById('detailCard');
+    card.classList.add('visible');
+    card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  document.getElementById('detailClose').addEventListener('click', () => {
+    document.getElementById('detailCard').classList.remove('visible');
+    selectedId = null;
+    document.querySelectorAll('tbody tr').forEach(r => r.classList.remove('selected'));
+  });
+
+  function renderDepthChart(creatures) {
+    const maxD = Math.max(...creatures.map(c => c.depth_max));
+    const sorted = [...creatures].sort((a,b) => b.depth_max - a.depth_max);
+    document.getElementById('depthChart').innerHTML = sorted.map(c => `
+      <div class="depth-row">
+        <span class="depth-row-name">${c.name}</span>
+        <div class="depth-bar-wrap">
+          <div class="depth-bar" style="left:${c.depth_min/maxD*100}%; width:${(c.depth_max-c.depth_min)/maxD*100}%"></div>
+        </div>
+        <span class="depth-label">${c.depth_max.toLocaleString()}m</span>
+      </div>
+    `).join('');
+  }
+
+  function renderDonut(pct, bioCount, nonCount) {
+    const circumference = 301.59;
+    const offset = circumference - (pct / 100) * circumference;
+    setTimeout(() => {
+      document.getElementById('donutArc').style.strokeDashoffset = offset;
+      document.getElementById('donutPct').textContent = pct + '%';
+      document.getElementById('legendBio').textContent = `${bioCount} bioluminescent`;
+      document.getElementById('legendNon').textContent = `${nonCount} non-luminescent`;
+    }, 300);
+  }
+
+  function renderZoneChart(zones) {
+    const max = Math.max(...Object.values(zones));
+    document.getElementById('zoneChart').innerHTML = Object.entries(zones)
+      .sort((a,b) => b[1]-a[1])
+      .map(([zone, count]) => `
+        <div class="zone-row">
+          <div class="zone-name"><span>${zone}</span><span class="zone-count">${count}</span></div>
+          <div class="zone-bar-bg"><div class="zone-bar-fill" style="width:${count/max*100}%"></div></div>
+        </div>
+      `).join('');
+  }
+
+  function applyFilters() {
+    let filtered = [...allCreatures];
+    if (activeFilters.bio !== 'all')
+      filtered = filtered.filter(c => String(c.bioluminescent) === activeFilters.bio);
+    if (activeFilters.zone !== 'all')
+      filtered = filtered.filter(c => c.habitat_zone === activeFilters.zone);
+    if (activeFilters.search)
+      filtered = filtered.filter(c =>
+        c.name.toLowerCase().includes(activeFilters.search) ||
+        c.habitat_zone.toLowerCase().includes(activeFilters.search)
+      );
+    renderTable(filtered);
+  }
+
+  document.querySelectorAll('[data-bio]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      activeFilters.bio = btn.dataset.bio;
+      document.querySelectorAll('[data-bio]').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      applyFilters();
+    });
+  });
+
+  document.getElementById('searchInput').addEventListener('input', e => {
+    activeFilters.search = e.target.value.toLowerCase();
+    applyFilters();
+  });
+
+  fetchAll();
+</script>
+</body>
+</html>
