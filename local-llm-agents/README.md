@@ -100,21 +100,23 @@ The dashboard includes:
 local-llm-agents/
 ├── agents/
 │   ├── __init__.py
-│   └── fs_agent.py         # Filesystem agent — list, read, and write local files
+│   └── fs_agent.py           # Filesystem agent — list, read, and write local files
 ├── api/
 │   ├── __init__.py
-│   └── main.py             # FastAPI server — serves creature data with filtering
+│   └── main.py               # FastAPI server — creatures, expeditions, chained routes
 ├── dashboard/
-│   └── index.html          # Web dashboard — charts, table, and detail card
+│   ├── index.html            # Creature database dashboard
+│   └── expeditions.html      # Research expeditions timeline dashboard
 ├── data/
-│   └── creatures.json      # Deep sea creature dataset (12 species)
+│   ├── creatures.json        # Deep sea creature dataset (12 species)
+│   └── expeditions.json      # Research expedition dataset (6 expeditions)
 ├── shared/
 │   ├── __init__.py
-│   ├── config.py           # Loads config.json and exposes it to all modules
-│   ├── safety.py           # Safe path validation (prevents directory traversal)
-│   └── tools.py            # Filesystem tool definitions and execute_tool logic
-├── config.json             # Project-wide configuration (paths, ports, URLs)
-├── pyproject.toml          # Makes the project root importable as a package
+│   ├── config.py             # Loads config.json and exposes it to all modules
+│   ├── safety.py             # Safe path validation (prevents directory traversal)
+│   └── tools.py              # Filesystem tool definitions and execute_tool logic
+├── config.json               # Project-wide configuration (paths, ports, URLs)
+├── pyproject.toml            # Makes the project root importable as a package
 ├── requirements.txt
 └── README.md
 ```

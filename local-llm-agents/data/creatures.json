@@ -9,6 +9,7 @@
     "size_cm": 30,
     "discovery_year": 1903,
     "habitat_zone": "Midnight Zone",
+    "expedition_id": 3,
     "description": "Neither squid nor octopus, this ancient cephalopod cloaks itself in a cape of webbed arms and produces blue bioluminescent light from photophores across its body."
   },
   {
@@ -21,6 +22,7 @@
     "size_cm": 20,
     "discovery_year": 1864,
     "habitat_zone": "Midnight Zone",
+    "expedition_id": 1,
     "description": "The female lures prey with a glowing bioluminescent appendage dangling from her head. The tiny parasitic male fuses permanently to her body, sharing her bloodstream."
   },
   {
@@ -33,6 +35,7 @@
     "size_cm": 20,
     "discovery_year": 1990,
     "habitat_zone": "Abyssal Zone",
+    "expedition_id": 5,
     "description": "Named for its ear-like fins that resemble the Disney elephant, this ghostly octopus hovers above the seafloor flapping its fins, swallowing prey whole."
   },
   {
@@ -45,6 +48,7 @@
     "size_cm": 76,
     "discovery_year": 1879,
     "habitat_zone": "Bathyal Zone",
+    "expedition_id": 1,
     "description": "A deep-sea relative of the common pill bug, this armored giant can survive years without food. When it does eat, it gorges itself until it can barely move."
   },
   {
@@ -57,6 +61,7 @@
     "size_cm": 4000,
     "discovery_year": 1888,
     "habitat_zone": "Midnight Zone",
+    "expedition_id": 2,
     "description": "One of the longest animals on Earth, this colonial organism is not a single creature but thousands of specialized individuals called zooids acting as one organism."
   },
   {
@@ -69,6 +74,7 @@
     "size_cm": 15,
     "discovery_year": 1939,
     "habitat_zone": "Twilight Zone",
+    "expedition_id": 4,
     "description": "Its transparent fluid-filled dome houses rotating tubular eyes that can look upward to spot prey silhouettes or forward when feeding. The green orbs are its eyes; its face is below."
   },
   {
@@ -81,6 +87,7 @@
     "size_cm": 200,
     "discovery_year": 1884,
     "habitat_zone": "Bathyal Zone",
+    "expedition_id": 2,
     "description": "A living fossil largely unchanged for 80 million years. Its 300 trident-shaped teeth and serpentine body make it look more like a sea monster than a shark."
   },
   {
@@ -93,6 +100,7 @@
     "size_cm": 15,
     "discovery_year": 1882,
     "habitat_zone": "Abyssal Zone",
+    "expedition_id": 2,
     "description": "A translucent sea cucumber that walks along the ocean floor on water-filled tube feet. They often gather in herds of hundreds, all facing the same current direction."
   },
   {
@@ -105,6 +113,7 @@
     "size_cm": 7,
     "discovery_year": 1915,
     "habitat_zone": "Twilight Zone",
+    "expedition_id": 3,
     "description": "Each tiny squid carries thousands of photophores that flash in complex blue patterns for communication and counterillumination. Each spring millions surface to spawn in Toyama Bay, Japan."
   },
   {
@@ -117,6 +126,7 @@
     "size_cm": 380,
     "discovery_year": 1898,
     "habitat_zone": "Bathyal Zone",
+    "expedition_id": 3,
     "description": "Its distinctive elongated snout is packed with electroreceptors. When prey is detected, its jaw launches forward in a slingshot motion — one of the fastest jaw strikes of any shark."
   },
   {
@@ -129,6 +139,7 @@
     "size_cm": 50,
     "discovery_year": 2006,
     "habitat_zone": "Abyssal Zone",
+    "expedition_id": 6,
     "description": "This carnivorous sponge looks like a candelabra hung with Christmas ornaments. The spherical balls are covered in tiny hooks that snare passing crustaceans whole."
   },
   {
@@ -141,6 +152,7 @@
     "size_cm": 25,
     "discovery_year": 1841,
     "habitat_zone": "Midnight Zone",
+    "expedition_id": 1,
     "description": "The only fish known to produce and see red bioluminescent light, giving it a secret searchlight invisible to prey. Its jawbones are unconnected to its skull, opening impossibly wide."
   }
 ]

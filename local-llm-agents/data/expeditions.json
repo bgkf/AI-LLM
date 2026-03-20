@@ -1,0 +1,68 @@
+[
+  {
+    "id": 1,
+    "name": "HMS Challenger Expedition",
+    "vessel": "HMS Challenger",
+    "institution": "Royal Society of London",
+    "years": "1872–1876",
+    "region": "Global Oceans",
+    "lead_scientist": "Charles Wyville Thomson",
+    "depth_record_m": 8180,
+    "description": "The first true oceanographic expedition, sailing 68,890 nautical miles and establishing the foundations of modern marine biology. The resulting 50-volume report took 23 years to publish."
+  },
+  {
+    "id": 2,
+    "name": "Valdivia Deep-Sea Expedition",
+    "vessel": "SS Valdivia",
+    "institution": "University of Kiel",
+    "years": "1898–1899",
+    "region": "Atlantic & Indian Oceans",
+    "lead_scientist": "Carl Chun",
+    "depth_record_m": 6200,
+    "description": "The first German deep-sea expedition, deploying early electric lights to observe creatures in situ. Chun's illustrated reports set a new standard for scientific illustration of deep-sea life."
+  },
+  {
+    "id": 3,
+    "name": "Albatross Pacific Expedition",
+    "vessel": "USFC Albatross",
+    "institution": "US Fish Commission",
+    "years": "1891–1905",
+    "region": "Pacific Ocean",
+    "lead_scientist": "Alexander Agassiz",
+    "depth_record_m": 5269,
+    "description": "A series of Pacific surveys aboard the purpose-built research steamer Albatross, the first vessel designed specifically for oceanographic research. Agassiz dredged thousands of new specimens from the Pacific deep."
+  },
+  {
+    "id": 4,
+    "name": "Scripps Institution Midwater Survey",
+    "vessel": "RV E.W. Scripps",
+    "institution": "Scripps Institution of Oceanography",
+    "years": "1936–1941",
+    "region": "North Pacific",
+    "lead_scientist": "William Ritter",
+    "depth_record_m": 900,
+    "description": "A systematic survey of midwater fauna off the California coast, pioneering the use of fine-mesh trawls to capture fragile gelatinous organisms that previous expeditions had destroyed."
+  },
+  {
+    "id": 5,
+    "name": "Johnson Sea-Link ROV Program",
+    "vessel": "RV Seward Johnson",
+    "institution": "Harbor Branch Oceanographic Institute",
+    "years": "1988–1995",
+    "region": "Atlantic & Pacific",
+    "lead_scientist": "Clyde Roper",
+    "depth_record_m": 4500,
+    "description": "One of the first sustained programs to use remotely operated vehicles for deep-sea biological surveys, capturing live footage of creatures previously known only from damaged trawl specimens."
+  },
+  {
+    "id": 6,
+    "name": "MBARI Deep-Sea Census",
+    "vessel": "RV Western Flyer",
+    "institution": "Monterey Bay Aquarium Research Institute",
+    "years": "2003–2009",
+    "region": "Monterey Canyon & NE Pacific",
+    "lead_scientist": "Steve Haddock",
+    "depth_record_m": 4200,
+    "description": "A systematic ROV-based census of deep-sea life in Monterey Canyon, producing the most comprehensive video catalogue of mid-water and abyssal fauna in the northeastern Pacific."
+  }
+]
