@@ -520,24 +520,6 @@
       color: var(--text-dim);
       font-style: italic;
     }
-
-    nav {
-      display: flex;
-      gap: 1.5rem;
-      padding: 1.5rem 0;
-      border-bottom: 1px solid var(--border);
-    }
-    nav a {
-      font-family: 'Cinzel', serif;
-      font-size: 0.65rem;
-      letter-spacing: 0.25em;
-      text-transform: uppercase;
-      color: var(--text-dim);
-      text-decoration: none;
-      transition: color 0.2s;
-    }
-    nav a:hover { color: var(--glow-cyan); }
-    nav a.active { color: var(--glow-blue); }
   </style>
 </head>
 <body>
@@ -545,11 +527,6 @@
 <div class="particles" id="particles"></div>
 
 <div class="container">
-  <nav>
-    <a href="index.html" class="active">Creature Database</a>
-    <a href="expeditions.html">Research Expeditions</a>
-  </nav>
-
   <header>
     <div class="header-eyebrow">Hadal Research Institute · Field Database</div>
     <h1>Deep Sea Creature Database</h1>
