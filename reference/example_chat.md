@@ -1,5 +1,6 @@
 ###  Example Chat
 #### A chat to demonstrate chaining api requests where the agent has to read both data files and join the data mentally. 
+- The dividers and <i>italics</i> are added for readability.
 ---
   
 Agent ready. Talking to LLM at http://localhost:8080 <br>
@@ -28,8 +29,7 @@ The other creatures in the database are not bioluminescent:
 - Sea Pig
 - Goblin Shark
 - Ping-Pong Tree Sponge
-
-
+---
 
 <i>**You:** of the 5 bioluminescent creatures, which research expedition discovered the most. what region were they discovered in and who was the scientist?</i>
 
@@ -53,7 +53,7 @@ The other bioluminescent creatures were discovered by:
 
 So the answer is that the **Albatross Pacific Expedition** discovered the most bioluminescent creatures, they were discovered in the **Pacific Ocean**, and the scientist was **Alexander Agassiz**.
 
-
+---
 
 <i>**You:** Which habitat zone has the most creatures, and which expedition is most responsible for discoveries in that zone?</i>   
 
@@ -100,9 +100,9 @@ Therefore:
 
 The HMS Challenger Expedition, led by Charles Wyville Thomson aboard HMS Challenger from 1872-1876, was responsible for discovering the most creatures in the Midnight Zone, which is also where the Anglerfish and Stoplight Loosejaw were found.
 
+---
 
-
-</i>**You:** Are there any habitat zones with no bioluminescent creatures? If so, which expeditions explored those zones?</i>
+<i>**You:** Are there any habitat zones with no bioluminescent creatures? If so, which expeditions explored those zones?</i>
 
 **Agent:** Let me analyze which habitat zones have no bioluminescent creatures by checking each zone:
 
@@ -153,10 +153,9 @@ Yes, there are habitat zones with no bioluminescent creatures. The **Abyssal Zon
 The expeditions that explored these zones were:
 - For Abyssal Zone: Expeditions 2 (Valdivia Deep-Sea Expedition), 5 (Johnson Sea-Link ROV Program), and 6 (MBARI Deep-Sea Census)
 - For Bathyal Zone: Expeditions 1 (HMS Challenger Expedition), 2 (Valdivia Deep-Sea Expedition), and 3 (Albatross Pacific Expedition)
+---
 
-
-
-</i>**You:** Compare the two most recent expeditions — what changed between them in terms of technology and discoveries?</i>
+<i>**You:** Compare the two most recent expeditions — what changed between them in terms of technology and discoveries?</i>
 
 **Agent:** Let me first identify the two most recent expeditions from the data:
 
