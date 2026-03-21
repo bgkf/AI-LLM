@@ -1,12 +1,14 @@
-#  Example Chat
-
-Agent ready. Talking to LLM at http://localhost:8080
-
+###  Example Chat
+#### A chat to demonstrate chaining api requests where the agent has to read both data files and join the data mentally. 
+---
+  
+Agent ready. Talking to LLM at http://localhost:8080 <br>
 Type 'exit' to quit.
 
-You: how many bioluminescent creatures are in the database?
 
-Agent: Based on the creatures.json file, I can count the bioluminescent creatures by looking at the "bioluminescent" field in each creature entry.
+<i>**You:** how many bioluminescent creatures are in the database?</i>
+
+**Agent:** Based on the creatures.json file, I can count the bioluminescent creatures by looking at the "bioluminescent" field in each creature entry.
 
 Looking at the data, the following creatures are bioluminescent (where "bioluminescent": true):
 
@@ -27,9 +29,11 @@ The other creatures in the database are not bioluminescent:
 - Goblin Shark
 - Ping-Pong Tree Sponge
 
-You: of the 5 bioluminescent creatures, which research expedition discovered the most. what region were they discovered in and who was the scientist?
 
-Agent: Based on my analysis of the data:
+
+<i>**You:** of the 5 bioluminescent creatures, which research expedition discovered the most. what region were they discovered in and who was the scientist?</i>
+
+**Agent:** Based on my analysis of the data:
 
 **Expedition with the most bioluminescent creatures discovered:**
 - **Albatross Pacific Expedition (expedition_id: 3)** discovered **2** bioluminescent creatures:
@@ -49,9 +53,11 @@ The other bioluminescent creatures were discovered by:
 
 So the answer is that the **Albatross Pacific Expedition** discovered the most bioluminescent creatures, they were discovered in the **Pacific Ocean**, and the scientist was **Alexander Agassiz**.
 
-You: Which habitat zone has the most creatures, and which expedition is most responsible for discoveries in that zone?   
 
-Agent: Let me analyze the habitat zones and their creature counts first:
+
+<i>**You:** Which habitat zone has the most creatures, and which expedition is most responsible for discoveries in that zone?</i>   
+
+**Agent:** Let me analyze the habitat zones and their creature counts first:
 
 Looking at the creatures.json file, I can see the habitat_zone for each creature:
 
@@ -94,9 +100,11 @@ Therefore:
 
 The HMS Challenger Expedition, led by Charles Wyville Thomson aboard HMS Challenger from 1872-1876, was responsible for discovering the most creatures in the Midnight Zone, which is also where the Anglerfish and Stoplight Loosejaw were found.
 
-You: Are there any habitat zones with no bioluminescent creatures? If so, which expeditions explored those zones?
 
-Agent: Let me analyze which habitat zones have no bioluminescent creatures by checking each zone:
+
+</i>**You:** Are there any habitat zones with no bioluminescent creatures? If so, which expeditions explored those zones?</i>
+
+**Agent:** Let me analyze which habitat zones have no bioluminescent creatures by checking each zone:
 
 From the creatures.json data:
 - Midnight Zone: Has 2 bioluminescent creatures (Vampire Squid, Anglerfish)
@@ -146,9 +154,11 @@ The expeditions that explored these zones were:
 - For Abyssal Zone: Expeditions 2 (Valdivia Deep-Sea Expedition), 5 (Johnson Sea-Link ROV Program), and 6 (MBARI Deep-Sea Census)
 - For Bathyal Zone: Expeditions 1 (HMS Challenger Expedition), 2 (Valdivia Deep-Sea Expedition), and 3 (Albatross Pacific Expedition)
 
-You: Compare the two most recent expeditions — what changed between them in terms of technology and discoveries?
 
-Agent: Let me first identify the two most recent expeditions from the data:
+
+</i>**You:** Compare the two most recent expeditions — what changed between them in terms of technology and discoveries?</i>
+
+**Agent:** Let me first identify the two most recent expeditions from the data:
 
 Looking at the expedition years:
 1. HMS Challenger Expedition: 1872–1876 (oldest)
