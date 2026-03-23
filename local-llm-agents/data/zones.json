@@ -1,0 +1,50 @@
+[
+  {
+    "id": 1,
+    "name": "Twilight Zone",
+    "aka": "Mesopelagic Zone",
+    "depth_min_m": 200,
+    "depth_max_m": 1000,
+    "temperature_c": "4–20",
+    "pressure_atm": "20–100",
+    "light": "Faint, no photosynthesis below 600m",
+    "oxygen_ml_per_l": "0.5–3.0",
+    "description": "The boundary between the sunlit surface and the permanent darkness below. Bioluminescence becomes common here as creatures exploit the dim light for camouflage and communication. Many species perform daily vertical migrations to the surface to feed at night."
+  },
+  {
+    "id": 2,
+    "name": "Midnight Zone",
+    "aka": "Bathypelagic Zone",
+    "depth_min_m": 1000,
+    "depth_max_m": 4000,
+    "temperature_c": "2–4",
+    "pressure_atm": "100–400",
+    "light": "Absolute darkness except bioluminescence",
+    "oxygen_ml_per_l": "0.1–1.0",
+    "description": "No sunlight penetrates here. Pressure is crushing, temperatures hover near freezing, and the only light is produced by the creatures themselves. Food is scarce — many inhabitants survive on marine snow drifting down from above."
+  },
+  {
+    "id": 3,
+    "name": "Bathyal Zone",
+    "aka": "Continental Slope Zone",
+    "depth_min_m": 200,
+    "depth_max_m": 4000,
+    "temperature_c": "2–10",
+    "pressure_atm": "20–400",
+    "light": "None",
+    "oxygen_ml_per_l": "0.5–2.0",
+    "description": "The sloping continental margins that descend from the shelf edge to the abyssal plain. Sediment cascades down these slopes, creating nutrient-rich pockets. More structurally diverse than the open water zones, supporting a wider range of benthic life."
+  },
+  {
+    "id": 4,
+    "name": "Abyssal Zone",
+    "aka": "Abyssopelagic Zone",
+    "depth_min_m": 4000,
+    "depth_max_m": 6000,
+    "temperature_c": "2–3",
+    "pressure_atm": "400–600",
+    "light": "None",
+    "oxygen_ml_per_l": "0.1–0.5",
+    "description": "The vast flat plains covering over 60% of the Earth's surface. Extreme pressure, near-freezing temperatures, and perpetual darkness. Life here is sparse but highly adapted — many creatures grow slowly, live for decades, and can survive months without food."
+  }
+]
