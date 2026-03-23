@@ -54,6 +54,7 @@ if __name__ == "__main__":
                 f"You are a helpful assistant with access to the local filesystem. "
                 f"You may only access files within: {ALLOWED_DIR}\n"
                 f"Use the provided tools to list directories, read files, and write files."
+                f"Always use tools to read files before answering. Never output raw tool call tags."
             )
         }
     ]

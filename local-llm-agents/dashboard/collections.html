@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Museum Collections — Deep Sea Database</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Crimson+Pro:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+  <style>
+    :root {
+      --void: #020810;
+      --abyss: #040f1e;
+      --deep: #071628;
+      --glow-blue: #00aaff;
+      --glow-cyan: #00ffee;
+      --glow-amber: #ffb347;
+      --bio-gold: #ffd166;
+      --accent-live: #00ff88;
+      --accent-preserved: #00aaff;
+      --accent-skeleton: #ff6b9d;
+      --text-primary: #c8e6f7;
+      --text-secondary: #6a9ab8;
+      --text-dim: #2e5470;
+      --border: rgba(0,170,255,0.12);
+      --border-bright: rgba(0,170,255,0.35);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--void);
+      color: var(--text-primary);
+      font-family: 'Crimson Pro', Georgia, serif;
+      font-size: 16px;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* top bar */
+    .topbar {
+      background: var(--abyss);
+      border-bottom: 1px solid var(--border-bright);
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      height: 56px;
+      flex-shrink: 0;
+      z-index: 1000;
+    }
+    nav { display: flex; gap: 1.5rem; }
+    nav a {
+      font-family: 'Cinzel', serif;
+      font-size: 0.62rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    nav a:hover { color: var(--glow-cyan); }
+    nav a.active { color: var(--glow-blue); }
+    .topbar-title {
+      font-family: 'Cinzel', serif;
+      font-size: 0.85rem;
+      color: var(--text-primary);
+      letter-spacing: 0.1em;
+      margin-right: auto;
+    }
+    .topbar-stats {
+      display: flex;
+      gap: 2rem;
+    }
+    .tstat {
+      text-align: center;
+    }
+    .tstat-val {
+      font-family: 'Cinzel', serif;
+      font-size: 1.1rem;
+      color: var(--glow-cyan);
+      line-height: 1;
+    }
+    .tstat-label {
+      font-size: 0.6rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+
+    /* filter bar */
+    .filterbar {
+      background: var(--deep);
+      border-bottom: 1px solid var(--border);
+      padding: 0.6rem 2rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex-shrink: 0;
+      flex-wrap: wrap;
+    }
+    .filter-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      white-space: nowrap;
+    }
+    .filter-btn {
+      background: transparent;
+      border: 1px solid var(--border-bright);
+      color: var(--text-secondary);
+      padding: 0.25rem 0.8rem;
+      font-family: 'Crimson Pro', serif;
+      font-size: 0.82rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      border-radius: 1px;
+    }
+    .filter-btn:hover { border-color: var(--glow-cyan); color: var(--glow-cyan); }
+    .filter-btn.active { background: rgba(0,170,255,0.15); border-color: var(--glow-blue); color: var(--glow-blue); }
+    .filter-btn.cond-live.active    { background: rgba(0,255,136,0.12); border-color: var(--accent-live);      color: var(--accent-live); }
+    .filter-btn.cond-preserved.active { background: rgba(0,170,255,0.12); border-color: var(--accent-preserved); color: var(--accent-preserved); }
+    .filter-btn.cond-skeleton.active  { background: rgba(255,107,157,0.12); border-color: var(--accent-skeleton); color: var(--accent-skeleton); }
+    .filter-sep { width: 1px; height: 20px; background: var(--border-bright); flex-shrink: 0; }
+    .clear-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-dim);
+      font-size: 0.75rem;
+      cursor: pointer;
+      padding: 0.25rem 0.5rem;
+      transition: color 0.2s;
+    }
+    .clear-btn:hover { color: var(--glow-amber); }
+
+    /* main layout */
+    .main {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    /* map */
+    #map {
+      flex: 1;
+      background: var(--void);
+    }
+
+    /* Leaflet overrides */
+    .leaflet-container { background: #020d1a; }
+    .leaflet-tile { filter: brightness(0.4) saturate(0.3) hue-rotate(180deg); }
+    .leaflet-control-zoom a {
+      background: var(--abyss) !important;
+      color: var(--text-secondary) !important;
+      border-color: var(--border-bright) !important;
+    }
+    .leaflet-control-attribution { display: none; }
+
+    /* custom marker */
+    .marker-pin {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      border: 2px solid;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Cinzel', serif;
+      font-size: 0.65rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 0 12px rgba(0,0,0,0.8);
+    }
+    .marker-pin.dim {
+      opacity: 0.2;
+      transform: scale(0.85);
+    }
+    .marker-pin.highlighted {
+      transform: scale(1.3);
+      z-index: 1000 !important;
+    }
+
+    /* side panel */
+    .panel {
+      width: 360px;
+      flex-shrink: 0;
+      background: var(--abyss);
+      border-left: 1px solid var(--border-bright);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      transform: translateX(100%);
+      transition: transform 0.3s cubic-bezier(0.16,1,0.3,1);
+    }
+    .panel.open { transform: translateX(0); }
+    .panel-header {
+      padding: 1.25rem 1.5rem 1rem;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+    }
+    .panel-header::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--glow-cyan), transparent);
+    }
+    .panel-institution {
+      font-family: 'Cinzel', serif;
+      font-size: 1rem;
+      color: var(--text-primary);
+      line-height: 1.3;
+      margin-bottom: 0.3rem;
+      padding-right: 2rem;
+    }
+    .panel-location {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      font-style: italic;
+    }
+    .panel-close {
+      position: absolute;
+      top: 1rem; right: 1rem;
+      background: transparent;
+      border: 1px solid var(--border-bright);
+      color: var(--text-secondary);
+      width: 1.75rem; height: 1.75rem;
+      cursor: pointer; font-size: 0.85rem;
+      border-radius: 1px; transition: all 0.2s;
+    }
+    .panel-close:hover { border-color: var(--glow-cyan); color: var(--glow-cyan); }
+    .panel-meta {
+      display: flex;
+      gap: 1rem;
+      padding: 0.75rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+      background: rgba(0,0,0,0.2);
+    }
+    .pmeta-item { text-align: center; }
+    .pmeta-val {
+      font-family: 'Cinzel', serif;
+      font-size: 1.1rem;
+      color: var(--glow-cyan);
+    }
+    .pmeta-label {
+      font-size: 0.6rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+    .panel-specimens {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1rem 1.5rem;
+    }
+    .panel-specimens::-webkit-scrollbar { width: 4px; }
+    .panel-specimens::-webkit-scrollbar-track { background: transparent; }
+    .panel-specimens::-webkit-scrollbar-thumb { background: var(--border-bright); }
+    .specimen-card {
+      border: 1px solid var(--border);
+      border-radius: 1px;
+      padding: 0.9rem 1rem;
+      margin-bottom: 0.75rem;
+      transition: border-color 0.2s;
+      cursor: pointer;
+    }
+    .specimen-card:hover { border-color: var(--border-bright); }
+    .spec-creature {
+      font-size: 0.95rem;
+      color: var(--text-primary);
+      margin-bottom: 0.15rem;
+    }
+    .spec-sci {
+      font-style: italic;
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      font-weight: 300;
+      margin-bottom: 0.5rem;
+    }
+    .spec-badges {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+    .badge {
+      font-size: 0.65rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0.15rem 0.5rem;
+      border-radius: 1px;
+      border: 1px solid;
+    }
+    .badge-live      { border-color: var(--accent-live);      color: var(--accent-live);      background: rgba(0,255,136,0.08); }
+    .badge-preserved { border-color: var(--accent-preserved); color: var(--accent-preserved); background: rgba(0,170,255,0.08); }
+    .badge-skeleton  { border-color: var(--accent-skeleton);  color: var(--accent-skeleton);  background: rgba(255,107,157,0.08); }
+    .badge-display   { border-color: var(--bio-gold);         color: var(--bio-gold);         background: rgba(255,209,102,0.08); }
+    .badge-year      { border-color: var(--text-dim);         color: var(--text-dim); }
+
+    .empty-panel {
+      padding: 2rem;
+      text-align: center;
+      color: var(--text-dim);
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-title">Deep Sea Database</div>
+  <nav>
+    <a href="index.html">Creatures</a>
+    <a href="expeditions.html">Expeditions</a>
+    <a href="collections.html" class="active">Collections</a>
+  </nav>
+  <div class="topbar-stats">
+    <div class="tstat"><div class="tstat-val" id="statInst">—</div><div class="tstat-label">Institutions</div></div>
+    <div class="tstat"><div class="tstat-val" id="statSpec">—</div><div class="tstat-label">Specimens</div></div>
+    <div class="tstat"><div class="tstat-val" id="statCountries">—</div><div class="tstat-label">Countries</div></div>
+    <div class="tstat"><div class="tstat-val" id="statLive">—</div><div class="tstat-label">Live</div></div>
+  </div>
+</div>
+
+<div class="filterbar">
+  <span class="filter-label">Condition —</span>
+  <button class="filter-btn active" data-condition="all">All</button>
+  <button class="filter-btn cond-live" data-condition="live">Live</button>
+  <button class="filter-btn cond-preserved" data-condition="preserved">Preserved</button>
+  <button class="filter-btn cond-skeleton" data-condition="skeleton">Skeleton</button>
+  <div class="filter-sep"></div>
+  <button class="filter-btn" data-display="true" id="displayBtn">On Display Only</button>
+  <div class="filter-sep"></div>
+  <button class="clear-btn" id="clearBtn">Clear selection</button>
+</div>
+
+<div class="main">
+  <div id="map"></div>
+  <div class="panel" id="panel">
+    <div class="panel-header">
+      <div class="panel-institution" id="pInstitution"></div>
+      <div class="panel-location" id="pLocation"></div>
+      <button class="panel-close" id="panelClose">✕</button>
+    </div>
+    <div class="panel-meta">
+      <div class="pmeta-item"><div class="pmeta-val" id="pCount">—</div><div class="pmeta-label">Specimens</div></div>
+      <div class="pmeta-item"><div class="pmeta-val" id="pLive">—</div><div class="pmeta-label">Live</div></div>
+      <div class="pmeta-item"><div class="pmeta-val" id="pDisplay">—</div><div class="pmeta-label">On Display</div></div>
+      <div class="pmeta-item"><div class="pmeta-val" id="pOldest">—</div><div class="pmeta-label">Oldest Acq.</div></div>
+    </div>
+    <div class="panel-specimens" id="panelSpecimens">
+      <div class="empty-panel">Select a marker to view holdings</div>
+    </div>
+  </div>
+</div>
+
+<script>
+const API = 'http://localhost:8000';
+let allSpecimens = [];
+let allCreatures = [];
+let markers = {};      // institution name → { markerEl, leafletMarker, specimens[] }
+let activeFilter = { condition: 'all', display: false };
+let selectedInstitution = null;
+
+// condition colours
+const condColor = {
+  live:      { stroke: '#00ff88', fill: 'rgba(0,255,136,0.15)' },
+  preserved: { stroke: '#00aaff', fill: 'rgba(0,170,255,0.15)' },
+  skeleton:  { stroke: '#ff6b9d', fill: 'rgba(255,107,157,0.15)' },
+  mixed:     { stroke: '#ffd166', fill: 'rgba(255,209,102,0.15)' },
+};
+
+function getInstitutionColor(specimens) {
+  const conditions = [...new Set(specimens.map(s => s.condition))];
+  if (conditions.length > 1) return condColor.mixed;
+  return condColor[conditions[0]] || condColor.preserved;
+}
+
+// ── Map setup ────────────────────────────────────────────────────────────────
+
+const map = L.map('map', { zoomControl: true, scrollWheelZoom: true })
+  .setView([30, 10], 2);
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  maxZoom: 18,
+}).addTo(map);
+
+// ── Data fetch ───────────────────────────────────────────────────────────────
+
+async function init() {
+  const [specimenRes, creatureRes, statsRes] = await Promise.all([
+    fetch(`${API}/specimens`),
+    fetch(`${API}/creatures`),
+    fetch(`${API}/stats`),
+  ]);
+  allSpecimens = await specimenRes.json();
+  allCreatures = await creatureRes.json();
+  const stats = await statsRes.json();
+
+  document.getElementById('statInst').textContent = stats.total_institutions;
+  document.getElementById('statSpec').textContent = stats.total_specimens;
+  document.getElementById('statCountries').textContent = stats.total_countries;
+  document.getElementById('statLive').textContent =
+    allSpecimens.filter(s => s.condition === 'live').length;
+
+  buildMarkers(allSpecimens);
+}
+
+// ── Group specimens by institution ───────────────────────────────────────────
+
+function groupByInstitution(specimens) {
+  const groups = {};
+  for (const s of specimens) {
+    if (!groups[s.institution]) {
+      groups[s.institution] = {
+        institution: s.institution,
+        city: s.city,
+        country: s.country,
+        lat: s.lat,
+        lng: s.lng,
+        specimens: [],
+      };
+    }
+    groups[s.institution].specimens.push(s);
+  }
+  return Object.values(groups);
+}
+
+// ── Build / rebuild markers ──────────────────────────────────────────────────
+
+function buildMarkers(specimens) {
+  // clear existing
+  Object.values(markers).forEach(m => map.removeLayer(m.leafletMarker));
+  markers = {};
+
+  const groups = groupByInstitution(specimens);
+
+  groups.forEach(group => {
+    const color = getInstitutionColor(group.specimens);
+    const count = group.specimens.length;
+
+    const icon = L.divIcon({
+      className: '',
+      html: `<div class="marker-pin" style="border-color:${color.stroke};background:${color.fill};color:${color.stroke};">${count}</div>`,
+      iconSize: [28, 28],
+      iconAnchor: [14, 14],
+    });
+
+    const lm = L.marker([group.lat, group.lng], { icon }).addTo(map);
+
+    lm.on('click', () => openPanel(group.institution));
+
+    markers[group.institution] = {
+      leafletMarker: lm,
+      group,
+      color,
+    };
+  });
+}
+
+// ── Highlight institution ────────────────────────────────────────────────────
+
+function highlightInstitution(institution) {
+  selectedInstitution = institution;
+  Object.entries(markers).forEach(([name, m]) => {
+    const el = m.leafletMarker.getElement()?.querySelector('.marker-pin');
+    if (!el) return;
+    if (name === institution) {
+      el.classList.remove('dim');
+      el.classList.add('highlighted');
+    } else {
+      el.classList.add('dim');
+      el.classList.remove('highlighted');
+    }
+  });
+}
+
+function clearHighlight() {
+  selectedInstitution = null;
+  Object.values(markers).forEach(m => {
+    const el = m.leafletMarker.getElement()?.querySelector('.marker-pin');
+    if (!el) return;
+    el.classList.remove('dim', 'highlighted');
+  });
+}
+
+// ── Side panel ───────────────────────────────────────────────────────────────
+
+function openPanel(institution) {
+  const m = markers[institution];
+  if (!m) return;
+  const { group } = m;
+
+  highlightInstitution(institution);
+
+  document.getElementById('pInstitution').textContent = institution;
+  document.getElementById('pLocation').textContent = `${group.city}, ${group.country}`;
+  document.getElementById('pCount').textContent = group.specimens.length;
+  document.getElementById('pLive').textContent = group.specimens.filter(s => s.condition === 'live').length;
+  document.getElementById('pDisplay').textContent = group.specimens.filter(s => s.on_display).length;
+  document.getElementById('pOldest').textContent = Math.min(...group.specimens.map(s => s.acquisition_year));
+
+  const list = document.getElementById('panelSpecimens');
+  list.innerHTML = group.specimens.map(s => {
+    const creature = allCreatures.find(c => c.id === s.creature_id);
+    if (!creature) return '';
+    return `
+      <div class="specimen-card">
+        <div class="spec-creature">${creature.name}</div>
+        <div class="spec-sci">${creature.scientific_name}</div>
+        <div class="spec-badges">
+          <span class="badge badge-${s.condition}">${s.condition}</span>
+          ${s.on_display ? '<span class="badge badge-display">On Display</span>' : ''}
+          <span class="badge badge-year">Acq. ${s.acquisition_year}</span>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  document.getElementById('panel').classList.add('open');
+}
+
+function closePanel() {
+  document.getElementById('panel').classList.remove('open');
+  clearHighlight();
+}
+
+document.getElementById('panelClose').addEventListener('click', closePanel);
+map.on('click', (e) => {
+  if (!e.originalEvent.target.closest('.marker-pin')) closePanel();
+});
+
+// ── Filters ──────────────────────────────────────────────────────────────────
+
+function applyFilters() {
+  let filtered = [...allSpecimens];
+  if (activeFilter.condition !== 'all')
+    filtered = filtered.filter(s => s.condition === activeFilter.condition);
+  if (activeFilter.display)
+    filtered = filtered.filter(s => s.on_display);
+  buildMarkers(filtered);
+  closePanel();
+}
+
+document.querySelectorAll('[data-condition]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    activeFilter.condition = btn.dataset.condition;
+    document.querySelectorAll('[data-condition]').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    applyFilters();
+  });
+});
+
+document.getElementById('displayBtn').addEventListener('click', function() {
+  activeFilter.display = !activeFilter.display;
+  this.classList.toggle('active', activeFilter.display);
+  applyFilters();
+});
+
+document.getElementById('clearBtn').addEventListener('click', () => {
+  activeFilter = { condition: 'all', display: false };
+  document.querySelectorAll('[data-condition]').forEach(b => b.classList.remove('active'));
+  document.querySelector('[data-condition="all"]').classList.add('active');
+  document.getElementById('displayBtn').classList.remove('active');
+  applyFilters();
+  closePanel();
+});
+
+init();
+</script>
+</body>
+</html>

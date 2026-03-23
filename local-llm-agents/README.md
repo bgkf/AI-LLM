@@ -69,11 +69,29 @@ exit        # stop the agent
 deactivate  # restore your shell's original Python environment
 ```
 
+## Using the async agent
+
+The async agent demonstrates two async patterns against the FastAPI server:
+
+- **Pattern 1 — Concurrent startup fetch**: fetches all 5 data sources simultaneously with `asyncio.gather` on startup, then answers questions from the combined in-memory dataset.
+- **Pattern 2 — Fan-out per creature**: type `profile <creature name>` to concurrently fetch the creature's full detail, food-web, zone, and specimens from 4 simultaneous API requests, then assemble a complete profile for the LLM to reason about.
+
+```bash
+# ensure the FastAPI server is running first (see below)
+python agents/async_agent.py
+```
+
+**Example prompts for async agent:**
+- `How many bioluminescent creatures are in each habitat zone?`
+- `Which expedition discovered the most creatures and what region were they in?`
+- `profile Goblin Shark` — triggers Pattern 2 fan-out
+- `profile Anglerfish`
+
 ## Chat history
 
 Chat history is stored in memory for the duration of the session only — the `messages` list in `fs_agent.py` accumulates the full conversation and is passed to the LLM on each turn. When you type `exit` or close the terminal, the history is lost. There is currently no persistence between sessions.
 
-## Running the dashboard
+## Running the dashboards
 
 **Step 1 — Update `config.json`** with your `data_dir` and `api_port`.
 
@@ -85,14 +103,35 @@ uv run uvicorn api.main:app --reload --port 8000
 
 **Step 3 — Open the dashboard**
 
-Open `dashboard/index.html` directly in your browser. The dashboard connects to the FastAPI server at `http://localhost:8000`.
+Open the dashboard files directly in your browser. Navigate between them using the nav bar at the top of each page.
 
-The dashboard includes:
-- Filterable data table (by name, bioluminescence, habitat zone)
-- Depth range chart for all species
-- Bioluminescence breakdown
-- Creature detail card (click any row)
+### Creature Database (`dashboard/index.html`)
+- Filterable data table with bioluminescence and zone filters
+- Depth range chart, bioluminescence donut, zone breakdown
+- Creature detail card with joined expedition data
 
+### Research Expeditions (`dashboard/expeditions.html`)
+- Chronological expedition timeline from 1872–2009
+- Expand any expedition to see discovered creatures
+- Detail panel chains `/expeditions/{id}` → `/creatures/{id}` per creature
+
+### Collections Map (`dashboard/collections.html`)
+- World map with a marker per institution (coloured by specimen condition)
+- Click a marker to highlight all holdings of that institution and open a side panel
+- Side panel lists all specimens held, condition, display status, and acquisition year
+- Filter by condition (live / preserved / skeleton) and on-display status
+
+## API Chaining
+
+The API demonstrates several chained request patterns:
+
+| Endpoint | Chains |
+|---|---|
+| `GET /creatures/{id}` | expedition + zone + specimens joined in one response |
+| `GET /creatures/{id}/food-web` | predators and prey resolved from relationships.json |
+| `GET /expeditions/{id}` | all discovered creatures joined in |
+| `GET /zones/{name}` | all resident creatures joined in |
+| `GET /specimens/{id}` | creature detail joined in |
 
 ## Structure
 
@@ -100,23 +139,28 @@ The dashboard includes:
 local-llm-agents/
 ├── agents/
 │   ├── __init__.py
-│   └── fs_agent.py           # Filesystem agent — list, read, and write local files
+│   └── fs_agent.py             # Filesystem agent — interactive terminal chat
+│   └── async_agent.py          # Async agent — concurrent API fetch patterns
 ├── api/
 │   ├── __init__.py
-│   └── main.py               # FastAPI server — creatures, expeditions, chained routes
+│   └── main.py                 # FastAPI server — all routes with chaining
 ├── dashboard/
-│   ├── index.html            # Creature database dashboard
-│   └── expeditions.html      # Research expeditions timeline dashboard
+│   ├── index.html              # Creature database dashboard
+│   ├── expeditions.html        # Research expeditions timeline
+│   └── collections.html        # Museum/aquarium collections world map
 ├── data/
-│   ├── creatures.json        # Deep sea creature dataset (12 species)
-│   └── expeditions.json      # Research expedition dataset (6 expeditions)
+│   ├── creatures.json          # 12 deep sea species
+│   ├── expeditions.json        # 6 research expeditions (1872–2009)
+│   ├── zones.json              # 4 habitat zones with environmental data
+│   ├── relationships.json      # Predator/prey relationship table
+│   └── specimens.json          # ~31 museum/aquarium specimen records
 ├── shared/
 │   ├── __init__.py
-│   ├── config.py             # Loads config.json and exposes it to all modules
-│   ├── safety.py             # Safe path validation (prevents directory traversal)
-│   └── tools.py              # Filesystem tool definitions and execute_tool logic
-├── config.json               # Project-wide configuration (paths, ports, URLs)
-├── pyproject.toml            # Makes the project root importable as a package
+│   ├── config.py               # Loads config.json
+│   ├── safety.py               # Safe path validation
+│   └── tools.py                # Filesystem tool definitions and execute_tool
+├── config.json                 # Project-wide configuration
+├── pyproject.toml              # Makes project root importable
 ├── requirements.txt
 └── README.md
 ```
@@ -124,6 +168,8 @@ local-llm-agents/
 ## Agents
 
 **`fs_agent.py`** — Gives the model sandboxed access to a local directory via tool calling. Set `ALLOWED_DIR` at the top of the file to control which directory the model can access.
+
+**`async_agent.py`** - Uses `asyncio` and `aiohttp` to make asynchronous API calls - while waiting for one response, other tasks run.
 
 ## Shared
 

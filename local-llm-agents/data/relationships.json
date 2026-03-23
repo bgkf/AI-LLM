@@ -1,0 +1,62 @@
+[
+  {
+    "predator_id": 2,
+    "prey_id": 9,
+    "notes": "Anglerfish ambush firefly squid drawn toward their bioluminescent lure in overlapping depth ranges."
+  },
+  {
+    "predator_id": 2,
+    "prey_id": 6,
+    "notes": "Anglerfish are known to consume barreleye fish that stray into deeper water during vertical migrations."
+  },
+  {
+    "predator_id": 7,
+    "prey_id": 4,
+    "notes": "Frilled sharks prey on crustaceans and slow-moving invertebrates including juvenile isopods encountered on the continental slope."
+  },
+  {
+    "predator_id": 7,
+    "prey_id": 1,
+    "notes": "Vampire squid are believed to be occasional prey for frilled sharks patrolling the upper midnight zone."
+  },
+  {
+    "predator_id": 10,
+    "prey_id": 8,
+    "notes": "Goblin sharks forage along the seafloor and consume sea pigs encountered during benthic cruising."
+  },
+  {
+    "predator_id": 10,
+    "prey_id": 4,
+    "notes": "Giant isopods are targeted by goblin sharks whose jaw-slingshot mechanism bypasses their armored exoskeleton."
+  },
+  {
+    "predator_id": 12,
+    "prey_id": 9,
+    "notes": "Stoplight loosejaw use their invisible red bioluminescence to illuminate and ambush firefly squid undetected."
+  },
+  {
+    "predator_id": 12,
+    "prey_id": 6,
+    "notes": "Loosejaws consume barreleye fish by opening their unhinged jaw wider than the prey's body diameter."
+  },
+  {
+    "predator_id": 1,
+    "prey_id": 9,
+    "notes": "Vampire squid scavenge detritus but have been observed capturing small squid including juvenile firefly squid."
+  },
+  {
+    "predator_id": 11,
+    "prey_id": 4,
+    "notes": "Ping-pong tree sponge hooks snare small crustaceans; juvenile isopods have been found entangled in specimens."
+  },
+  {
+    "predator_id": 5,
+    "prey_id": 9,
+    "notes": "Siphonophores trail long tentacles that ensnare small squid and fish including firefly squid in the twilight zone."
+  },
+  {
+    "predator_id": 5,
+    "prey_id": 6,
+    "notes": "Siphonophore nematocysts can paralyse small fish like the barreleye that swim into their trailing tentacle curtain."
+  }
+]
