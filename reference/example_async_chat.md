@@ -1,3 +1,4 @@
+```
 ============================================================
   Async Deep Sea Agent
 ============================================================
@@ -47,9 +48,9 @@ Therefore, the creatures found in the same zone as the Stoplight Loosejaw that w
 
 You: 
 
+```
 
-
-
+```
 ============================================================
   Async Deep Sea Agent
 ============================================================
@@ -106,3 +107,4 @@ Agent: **Anglerfish Summary**
 3. Museum Victoria (Melbourne, Australia) - preserved specimen acquired in 1987
 
 You: 
+```
