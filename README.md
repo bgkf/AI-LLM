@@ -1,8 +1,4 @@
-### A cllection of AI and LLM projects and tools
+### A collection of AI and LLM projects and tools
 
-**Development**<br>
-* Home lab projects.
-<br>
-
-**Production**<br>
-* Tools I am using in my daily work.
+Development contains home lab projects. <br>
+Production has tools I am using in my daily work.
