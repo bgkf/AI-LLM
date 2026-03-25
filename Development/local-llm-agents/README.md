@@ -139,8 +139,11 @@ The API demonstrates several chained request patterns:
 local-llm-agents/
 ├── agents/
 │   ├── __init__.py
-│   └── fs_agent.py             # Filesystem agent — interactive terminal chat
+│   ├── fs_agent.py             # Filesystem agent — interactive terminal chat
 │   └── async_agent.py          # Async agent — concurrent API fetch patterns
+├── cli/
+│   ├── __init__.py
+│   └── deepseacli.py           # CLI tool — creature, expedition, export, chain, info
 ├── api/
 │   ├── __init__.py
 │   └── main.py                 # FastAPI server — all routes with chaining
@@ -186,3 +189,92 @@ local-llm-agents/
 3. Import `config` from `shared/config.py` for any paths or settings
 4. Combine tool sets as needed (e.g. `tools = filesystem_tools + web_tools`)
 5. Implement the agentic loop following the pattern in `fs_agent.py`
+
+## CLI Tool
+
+The CLI tool provides quick access to the database without running an agent. Requires the FastAPI server to be running.
+
+```bash
+python cli/deepseacli.py <command>
+```
+
+### Commands
+
+**Creatures**
+```bash
+python cli/deepseacli.py creature list
+python cli/deepseacli.py creature get "Goblin Shark"
+python cli/deepseacli.py creature search --zone "Bathyal Zone"
+python cli/deepseacli.py creature search --bioluminescent
+python cli/deepseacli.py creature foodweb "Anglerfish"
+```
+
+**Expeditions**
+```bash
+python cli/deepseacli.py expedition list
+python cli/deepseacli.py expedition get "HMS Challenger"
+```
+
+**Specimens**
+```bash
+python cli/deepseacli.py specimens "Vampire Squid"
+```
+
+**Export**
+```bash
+python cli/deepseacli.py export creatures --format csv
+python cli/deepseacli.py export creatures --format json --out creatures_full.json
+python cli/deepseacli.py export expeditions --format csv --out expeditions.csv
+```
+
+**Chain** — live API chain demo showing each request as it fires
+```bash
+python cli/deepseacli.py chain "Goblin Shark"
+```
+
+**Info** — API status and config
+```bash
+python cli/deepseacli.py info
+```
+
+### Output formats
+
+All commands support `--output` / `-o`:
+- `table` — formatted terminal output (default)
+- `json` — raw JSON
+- `csv` — comma-separated values
+
+Export commands use `--format` instead, and support `--out <filename>` to write to a file.
+
+## CLI Tool
+
+`cli/deepseacli.py` is a terminal tool for querying the database without opening a browser. Requires the FastAPI server to be running.
+
+```bash
+# creature commands
+python cli/deepseacli.py creature list
+python cli/deepseacli.py creature get "Goblin Shark"
+python cli/deepseacli.py creature get "Goblin Shark" --output json
+python cli/deepseacli.py creature search --zone "Bathyal Zone"
+python cli/deepseacli.py creature search --bioluminescent
+python cli/deepseacli.py creature foodweb "Anglerfish"
+
+# expedition commands
+python cli/deepseacli.py expedition list
+python cli/deepseacli.py expedition get "Valdivia"
+
+# specimen holdings
+python cli/deepseacli.py specimens "Firefly Squid"
+
+# export — pipe to a file
+python cli/deepseacli.py export creatures --format csv > creatures.csv
+python cli/deepseacli.py export expeditions --format json > expeditions.json
+
+# chain demo — shows each API request firing with timing
+python cli/deepseacli.py chain "Goblin Shark"
+
+# project info and API health check
+python cli/deepseacli.py info
+```
+
+All table commands accept `--output json` to return raw JSON instead.
