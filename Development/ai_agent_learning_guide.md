@@ -5,11 +5,12 @@
 Each section maps to a core skill area. Under each section you'll find:
 - **What you're building toward** — the end goal
 - **Starter prompts** — copy/paste these to kick off a session
-- **Progression prompts** — use these as you level up
-
+- **Progression prompts** — use these as you level up 
+<br>
 Work through sections in order, or jump to what's most relevant. Every prompt
 is designed to produce working, runnable code and real explanations — not
 just theory.
+
 ---
 ## Section 1: Python for Automation & APIs
 **Goal:** Write Python that calls APIs, manipulates data, and automates
@@ -186,16 +187,11 @@ Include how to handle failures and retries."
 ## Quick-Reference: Prompt Patterns That Work Well
 | Situation | Prompt Pattern |
 |---|---|
-| Learning something new | `"Teach me X. Show a working example, then explain
-each part."` |
-| Debugging | `"Here's my code and the error I'm getting. Diagnose what's
-wrong and fix it."` |
-| Going deeper | `"I understand the basics of X. What do I need to know next,
-and why does it matter?"` |
-| Production-proofing | `"My script works locally. What would break in
-production? Make it production-ready."` |
-| Professional polish | `"Make this project look like it was built by a
-professional. What's missing?"` |
+| Learning something new | `"Teach me X. Show a working example, then explain each part."` |
+| Debugging | `"Here's my code and the error I'm getting. Diagnose what's wrong and fix it."` |
+| Going deeper | `"I understand the basics of X. What do I need to know next, and why does it matter?"` |
+| Production-proofing | `"My script works locally. What would break in production? Make it production-ready."` |
+
 ---
 ## Suggested Learning Order
 1. **Python automation & APIs** — foundation for everything else
