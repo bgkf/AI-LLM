@@ -194,7 +194,7 @@ wrong and fix it."` |
 and why does it matter?"` |
 | Production-proofing | `"My script works locally. What would break in
 production? Make it production-ready."` |
-| Portfolio polish | `"Make this project look like it was built by a
+| Professional polish | `"Make this project look like it was built by a
 professional. What's missing?"` |
 ---
 ## Suggested Learning Order
