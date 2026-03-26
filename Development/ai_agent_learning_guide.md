@@ -6,7 +6,7 @@ Each section maps to a core skill area. Under each section you'll find:
 - **What you're building toward** — the end goal
 - **Starter prompts** — copy/paste these to kick off a session
 - **Progression prompts** — use these as you level up
-- **Portfolio prompt** — turn the work into a GitHub-ready project 
+
 Work through sections in order, or jump to what's most relevant. Every prompt
 is designed to produce working, runnable code and real explanations — not
 just theory.
