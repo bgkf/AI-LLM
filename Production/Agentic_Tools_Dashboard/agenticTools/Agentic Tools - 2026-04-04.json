@@ -1,0 +1,1669 @@
+[
+  {
+    "collected_at": "2026-04-05T18:22:24Z",
+    "device": {
+      "hostname": "computerName",
+      "serial_number": "abcde12345",
+      "os_version": "26.4",
+      "current_user": "userName"
+    },
+    "tools": {
+      "claude": {
+        "installed": true,
+        "version": "1.1.9669",
+        "connections": []
+      },
+      "chatgpt": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "cursor": {
+        "installed": true,
+        "version": "3.0.9",
+        "connections": [
+          {
+            "name": "Linear",
+            "type": "mcp",
+            "command": "",
+            "enabled": true
+          },
+          {
+            "name": "Figma",
+            "type": "mcp",
+            "command": "",
+            "enabled": true
+          },
+          {
+            "name": "Guru",
+            "type": "mcp",
+            "command": "",
+            "enabled": true
+          }
+        ]
+      },
+      "gemini": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "raycast": {
+        "installed": true,
+        "version": "1.104.11",
+        "connections": [],
+        "extensions_installed": 0,
+        "extensions": []
+      },
+      "warp": {
+        "installed": true,
+        "version": "0.2026.03.04.08.20.03",
+        "connections": []
+      },
+      "visual_studio_code": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "comet": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "superhuman": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "bear": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "ticktick": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "perplexity": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      }
+    }
+  },
+  {
+    "collected_at": "2026-04-05T17:22:16Z",
+    "device": {
+      "hostname": "computerName",
+      "serial_number": "abcde12345",
+      "os_version": "26.4",
+      "current_user": "userName"
+    },
+    "tools": {
+      "claude": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "chatgpt": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "cursor": {
+        "installed": true,
+        "version": "3.0.9",
+        "connections": []
+      },
+      "gemini": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "raycast": {
+        "installed": true,
+        "version": "1.104.11",
+        "connections": [],
+        "extensions_installed": 0,
+        "extensions": []
+      },
+      "warp": {
+        "installed": true,
+        "version": "0.2025.11.19.08.12.06",
+        "connections": []
+      },
+      "visual_studio_code": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "comet": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "superhuman": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "bear": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "ticktick": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "perplexity": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      }
+    }
+  },
+  {
+    "collected_at": "2026-04-05T17:30:38Z",
+    "device": {
+      "hostname": "computerName",
+      "serial_number": "abcde12345",
+      "os_version": "26.4",
+      "current_user": "userName"
+    },
+    "tools": {
+      "claude": {
+        "installed": true,
+        "version": "1.1.9669",
+        "connections": []
+      },
+      "chatgpt": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "cursor": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "gemini": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "raycast": {
+        "installed": false,
+        "version": null,
+        "connections": [],
+        "extensions_installed": 0,
+        "extensions": []
+      },
+      "warp": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "visual_studio_code": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "comet": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "superhuman": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "bear": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "ticktick": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "perplexity": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      }
+    }
+  },
+  {
+    "collected_at": "2026-04-05T14:57:27Z",
+    "device": {
+      "hostname": "computerName",
+      "serial_number": "abcde12345",
+      "os_version": "26.4",
+      "current_user": "userName"
+    },
+    "tools": {
+      "claude": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "chatgpt": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "cursor": {
+        "installed": true,
+        "version": "2.6.22",
+        "connections": []
+      },
+      "gemini": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "raycast": {
+        "installed": false,
+        "version": null,
+        "connections": [],
+        "extensions_installed": 0,
+        "extensions": []
+      },
+      "warp": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "visual_studio_code": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "comet": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "superhuman": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "bear": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "ticktick": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "perplexity": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      }
+    }
+  },
+  {
+    "collected_at": "2026-04-05T15:03:47Z",
+    "device": {
+      "hostname": "computerName",
+      "serial_number": "abcde12345",
+      "os_version": "26.4",
+      "current_user": "userName"
+    },
+    "tools": {
+      "claude": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "chatgpt": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "cursor": {
+        "installed": true,
+        "version": "3.0.9",
+        "connections": []
+      },
+      "gemini": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "raycast": {
+        "installed": false,
+        "version": null,
+        "connections": [],
+        "extensions_installed": 0,
+        "extensions": []
+      },
+      "warp": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "visual_studio_code": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "comet": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "superhuman": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "bear": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "ticktick": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "perplexity": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      }
+    }
+  },
+  {
+    "collected_at": "2026-04-05T17:34:05Z",
+    "device": {
+      "hostname": "computerName",
+      "serial_number": "abcde12345",
+      "os_version": "26.4",
+      "current_user": "userName"
+    },
+    "tools": {
+      "claude": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "chatgpt": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "cursor": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "gemini": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "raycast": {
+        "installed": false,
+        "version": null,
+        "connections": [],
+        "extensions_installed": 0,
+        "extensions": []
+      },
+      "warp": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "visual_studio_code": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "comet": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "superhuman": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "bear": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "ticktick": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "perplexity": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      }
+    }
+  },
+  {
+    "collected_at": "2026-04-05T15:07:44Z",
+    "device": {
+      "hostname": "computerName",
+      "serial_number": "abcde12345",
+      "os_version": "26.4",
+      "current_user": "userName"
+    },
+    "tools": {
+      "claude": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "chatgpt": {
+        "installed": true,
+        "version": "1.2026.049",
+        "connections": []
+      },
+      "cursor": {
+        "installed": true,
+        "version": "3.0.9",
+        "connections": []
+      },
+      "gemini": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "raycast": {
+        "installed": false,
+        "version": null,
+        "connections": [],
+        "extensions_installed": 0,
+        "extensions": []
+      },
+      "warp": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "visual_studio_code": {
+        "installed": true,
+        "version": "1.114.0",
+        "connections": []
+      },
+      "comet": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "superhuman": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "bear": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "ticktick": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "perplexity": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      }
+    }
+  },
+  {
+    "collected_at": "2026-04-05T15:04:57Z",
+    "device": {
+      "hostname": "computerName",
+      "serial_number": "abcde12345",
+      "os_version": "26.4",
+      "current_user": "userName"
+    },
+    "tools": {
+      "claude": {
+        "installed": true,
+        "version": "1.569.0",
+        "connections": [
+          {
+            "name": "filesystem",
+            "type": "mcp",
+            "command": "npx",
+            "enabled": true
+          },
+          {
+            "name": "jamf",
+            "type": "mcp",
+            "command": "/Users/userName/.local/bin/uv",
+            "enabled": true
+          }
+        ]
+      },
+      "chatgpt": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "cursor": {
+        "installed": true,
+        "version": "3.0.9",
+        "connections": [
+          {
+            "name": "github",
+            "type": "mcp",
+            "command": "npx",
+            "enabled": true
+          }
+        ]
+      },
+      "gemini": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "raycast": {
+        "installed": true,
+        "version": "1.104.11",
+        "connections": [],
+        "extensions_installed": 0,
+        "extensions": []
+      },
+      "warp": {
+        "installed": true,
+        "version": "0.2026.02.10.11.37.00",
+        "connections": []
+      },
+      "visual_studio_code": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "comet": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "superhuman": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "bear": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "ticktick": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "perplexity": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      }
+    }
+  },
+  {
+    "collected_at": "2026-04-05T15:07:58Z",
+    "device": {
+      "hostname": "computerName",
+      "serial_number": "abcde12345",
+      "os_version": "26.4",
+      "current_user": "userName"
+    },
+    "tools": {
+      "claude": {
+        "installed": true,
+        "version": "1.1.9669",
+        "connections": []
+      },
+      "chatgpt": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "cursor": {
+        "installed": true,
+        "version": "2.6.22",
+        "connections": []
+      },
+      "gemini": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "raycast": {
+        "installed": false,
+        "version": null,
+        "connections": [],
+        "extensions_installed": 0,
+        "extensions": []
+      },
+      "warp": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "visual_studio_code": {
+        "installed": true,
+        "version": "1.97.0",
+        "connections": []
+      },
+      "comet": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "superhuman": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "bear": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "ticktick": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "perplexity": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      }
+    }
+  },
+  {
+    "collected_at": "2026-04-05T17:56:38Z",
+    "device": {
+      "hostname": "computerName",
+      "serial_number": "abcde12345",
+      "os_version": "26.4",
+      "current_user": "userName"
+    },
+    "tools": {
+      "claude": {
+        "installed": true,
+        "version": "1.569.0",
+        "connections": []
+      },
+      "chatgpt": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "cursor": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "gemini": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "raycast": {
+        "installed": false,
+        "version": null,
+        "connections": [],
+        "extensions_installed": 0,
+        "extensions": []
+      },
+      "warp": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "visual_studio_code": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "comet": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "superhuman": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "bear": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "ticktick": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "perplexity": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      }
+    }
+  },
+  {
+    "collected_at": "2026-04-05T15:17:49Z",
+    "device": {
+      "hostname": "computerName",
+      "serial_number": "abcde12345",
+      "os_version": "15.7.4",
+      "current_user": "userName"
+    },
+    "tools": {
+      "claude": {
+        "installed": true,
+        "version": "1.569.0",
+        "connections": []
+      },
+      "chatgpt": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "cursor": {
+        "installed": true,
+        "version": "3.0.9",
+        "connections": []
+      },
+      "gemini": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "raycast": {
+        "installed": true,
+        "version": "1.104.11",
+        "connections": [],
+        "extensions_installed": 0,
+        "extensions": []
+      },
+      "warp": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "visual_studio_code": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "comet": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "superhuman": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "bear": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "ticktick": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "perplexity": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      }
+    }
+  },
+  {
+    "collected_at": "2026-04-05T18:00:56Z",
+    "device": {
+      "hostname": "computerName",
+      "serial_number": "abcde12345",
+      "os_version": "26.4",
+      "current_user": "userName"
+    },
+    "tools": {
+      "claude": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "chatgpt": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "cursor": {
+        "installed": true,
+        "version": "3.0.4",
+        "connections": [
+          {
+            "name": "Linear",
+            "type": "mcp",
+            "command": "",
+            "enabled": true
+          },
+          {
+            "name": "Guru",
+            "type": "mcp",
+            "command": "",
+            "enabled": true
+          },
+          {
+            "name": "Knock",
+            "type": "mcp",
+            "command": "",
+            "enabled": true
+          },
+          {
+            "name": "Sentry",
+            "type": "mcp",
+            "command": "",
+            "enabled": true
+          }
+        ]
+      },
+      "gemini": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "raycast": {
+        "installed": false,
+        "version": null,
+        "connections": [],
+        "extensions_installed": 0,
+        "extensions": []
+      },
+      "warp": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "visual_studio_code": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "comet": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "superhuman": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "bear": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "ticktick": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "perplexity": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      }
+    }
+  },
+  {
+    "collected_at": "2026-04-05T15:37:46Z",
+    "device": {
+      "hostname": "computerName",
+      "serial_number": "abcde12345",
+      "os_version": "26.4",
+      "current_user": "userName"
+    },
+    "tools": {
+      "claude": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "chatgpt": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "cursor": {
+        "installed": true,
+        "version": "3.0.9",
+        "connections": []
+      },
+      "gemini": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "raycast": {
+        "installed": false,
+        "version": null,
+        "connections": [],
+        "extensions_installed": 0,
+        "extensions": []
+      },
+      "warp": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "visual_studio_code": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "comet": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "superhuman": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "bear": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "ticktick": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "perplexity": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      }
+    }
+  },
+  {
+    "collected_at": "2026-04-05T19:08:29Z",
+    "device": {
+      "hostname": "computerName",
+      "serial_number": "abcde12345",
+      "os_version": "26.4",
+      "current_user": "userName"
+    },
+    "tools": {
+      "claude": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "chatgpt": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "cursor": {
+        "installed": true,
+        "version": "3.0.9",
+        "connections": [
+          {
+            "name": "Linear",
+            "type": "mcp",
+            "command": "",
+            "enabled": true
+          },
+          {
+            "name": "Figma",
+            "type": "mcp",
+            "command": "",
+            "enabled": true
+          }
+        ]
+      },
+      "gemini": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "raycast": {
+        "installed": false,
+        "version": null,
+        "connections": [],
+        "extensions_installed": 0,
+        "extensions": []
+      },
+      "warp": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "visual_studio_code": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "comet": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "superhuman": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "bear": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "ticktick": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "perplexity": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      }
+    }
+  },
+  {
+    "collected_at": "2026-04-05T18:26:28Z",
+    "device": {
+      "hostname": "computerName",
+      "serial_number": "abcde12345",
+      "os_version": "26.4",
+      "current_user": "userName"
+    },
+    "tools": {
+      "claude": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "chatgpt": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "cursor": {
+        "installed": true,
+        "version": "2.6.21",
+        "connections": []
+      },
+      "gemini": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "raycast": {
+        "installed": false,
+        "version": null,
+        "connections": [],
+        "extensions_installed": 0,
+        "extensions": []
+      },
+      "warp": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "visual_studio_code": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "comet": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "superhuman": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "bear": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "ticktick": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "perplexity": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      }
+    }
+  },
+  {
+    "collected_at": "2026-04-05T15:59:15Z",
+    "device": {
+      "hostname": "computerName",
+      "serial_number": "abcde12345",
+      "os_version": "26.4",
+      "current_user": "userName"
+    },
+    "tools": {
+      "claude": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "chatgpt": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "cursor": {
+        "installed": true,
+        "version": "3.0.9",
+        "connections": []
+      },
+      "gemini": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "raycast": {
+        "installed": false,
+        "version": null,
+        "connections": [],
+        "extensions_installed": 0,
+        "extensions": []
+      },
+      "warp": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "visual_studio_code": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "comet": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "superhuman": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "bear": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "ticktick": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "perplexity": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      }
+    }
+  },
+  {
+    "collected_at": "2026-04-05T16:01:16Z",
+    "device": {
+      "hostname": "computerName",
+      "serial_number": "abcde12345",
+      "os_version": "26.4",
+      "current_user": "userName"
+    },
+    "tools": {
+      "claude": {
+        "installed": true,
+        "version": "1.569.0",
+        "connections": []
+      },
+      "chatgpt": {
+        "installed": true,
+        "version": "1.2026.049",
+        "connections": []
+      },
+      "cursor": {
+        "installed": true,
+        "version": "3.0.9",
+        "connections": [
+          {
+            "name": "Figma",
+            "type": "mcp",
+            "command": "",
+            "enabled": true
+          },
+          {
+            "name": "Linear",
+            "type": "mcp",
+            "command": "",
+            "enabled": true
+          },
+          {
+            "name": "Sentry",
+            "type": "mcp",
+            "command": "",
+            "enabled": true
+          },
+          {
+            "name": "incidentio",
+            "type": "mcp",
+            "command": "/Users/userName/go/bin/mcp-server",
+            "enabled": true
+          },
+          {
+            "name": "knock",
+            "type": "mcp",
+            "command": "",
+            "enabled": true
+          }
+        ]
+      },
+      "gemini": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "raycast": {
+        "installed": true,
+        "version": "1.104.11",
+        "connections": [],
+        "extensions_installed": 0,
+        "extensions": []
+      },
+      "warp": {
+        "installed": true,
+        "version": "0.1.0",
+        "connections": []
+      },
+      "visual_studio_code": {
+        "installed": true,
+        "version": "1.98.2",
+        "connections": []
+      },
+      "comet": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "superhuman": {
+        "installed": true,
+        "version": "33.0.6",
+        "connections": []
+      },
+      "bear": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "ticktick": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "perplexity": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      }
+    }
+  },
+  {
+    "collected_at": "2026-04-05T16:09:32Z",
+    "device": {
+      "hostname": "computerName",
+      "serial_number": "abcde12345",
+      "os_version": "26.4",
+      "current_user": "userName"
+    },
+    "tools": {
+      "claude": {
+        "installed": true,
+        "version": "1.569.0",
+        "connections": []
+      },
+      "chatgpt": {
+        "installed": true,
+        "version": "1.2026.049",
+        "connections": []
+      },
+      "cursor": {
+        "installed": true,
+        "version": "3.0.9",
+        "connections": [
+          {
+            "name": "Linear",
+            "type": "mcp",
+            "command": "",
+            "enabled": true
+          },
+          {
+            "name": "sentry",
+            "type": "mcp",
+            "command": "",
+            "enabled": true
+          }
+        ]
+      },
+      "gemini": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "raycast": {
+        "installed": true,
+        "version": "1.104.11",
+        "connections": [],
+        "extensions_installed": 0,
+        "extensions": []
+      },
+      "warp": {
+        "installed": true,
+        "version": "0.2026.02.10.11.37.00",
+        "connections": []
+      },
+      "visual_studio_code": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "comet": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "superhuman": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "bear": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "ticktick": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "perplexity": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      }
+    }
+  },
+  {
+    "collected_at": "2026-04-05T16:36:41Z",
+    "device": {
+      "hostname": "computerName",
+      "serial_number": "abcde12345",
+      "os_version": "26.4",
+      "current_user": "userName"
+    },
+    "tools": {
+      "claude": {
+        "installed": true,
+        "version": "1.569.0",
+        "connections": []
+      },
+      "chatgpt": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "cursor": {
+        "installed": true,
+        "version": "2.6.21",
+        "connections": []
+      },
+      "gemini": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "raycast": {
+        "installed": false,
+        "version": null,
+        "connections": [],
+        "extensions_installed": 0,
+        "extensions": []
+      },
+      "warp": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "visual_studio_code": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "comet": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "superhuman": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "bear": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "ticktick": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "perplexity": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      }
+    }
+  },
+  {
+    "collected_at": "2026-04-05T19:58:44Z",
+    "device": {
+      "hostname": "computerName",
+      "serial_number": "abcde12345",
+      "os_version": "26.4",
+      "current_user": "userName"
+    },
+    "tools": {
+      "claude": {
+        "installed": true,
+        "version": "1.1.9669",
+        "connections": []
+      },
+      "chatgpt": {
+        "installed": true,
+        "version": "1.2026.049",
+        "connections": []
+      },
+      "cursor": {
+        "installed": true,
+        "version": "3.0.9",
+        "connections": [
+          {
+            "name": "Linear",
+            "type": "mcp",
+            "command": "",
+            "enabled": true
+          }
+        ]
+      },
+      "gemini": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "raycast": {
+        "installed": true,
+        "version": "1.104.11",
+        "connections": [],
+        "extensions_installed": 0,
+        "extensions": []
+      },
+      "warp": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "visual_studio_code": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "comet": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "superhuman": {
+        "installed": true,
+        "version": "1038.0.27",
+        "connections": []
+      },
+      "bear": {
+        "installed": true,
+        "version": "2.7",
+        "connections": [
+          {
+            "name": "iCloud Sync",
+            "type": "sync",
+            "enabled": true
+          }
+        ]
+      },
+      "ticktick": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "perplexity": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      }
+    }
+  },
+  {
+    "collected_at": "2026-04-05T23:02:22Z",
+    "device": {
+      "hostname": "computerName",
+      "serial_number": "abcde12345",
+      "os_version": "15.7.4",
+      "current_user": "userName"
+    },
+    "tools": {
+      "claude": {
+        "installed": true,
+        "version": "1.569.0",
+        "connections": []
+      },
+      "chatgpt": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "cursor": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "gemini": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "raycast": {
+        "installed": false,
+        "version": null,
+        "connections": [],
+        "extensions_installed": 0,
+        "extensions": []
+      },
+      "warp": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "visual_studio_code": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "comet": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "superhuman": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "bear": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "ticktick": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      },
+      "perplexity": {
+        "installed": false,
+        "version": null,
+        "connections": []
+      }
+    }
+  }
+]
