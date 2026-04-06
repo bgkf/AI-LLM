@@ -1,0 +1,31 @@
+{
+  "data_dir": "/Path/To/GitHub/Agentic_Tools",
+  "api": {
+    "host": "0.0.0.0",
+    "port": 8000
+  },
+  "llm": {
+    "base_url": "http://localhost:12434/engines/llama.cpp/v1",
+    "model": "qwen2.5:7B-Q4_K_M",
+    "max_tokens": 1024,
+    "temperature": 0.2
+  },
+  "agent": {
+    "sandbox_dir": "/Path/To/GitHub/Agentic_Tools",
+    "filesystem_access": "read_only"
+  },
+  "tools": [
+    "claude",
+    "chatgpt",
+    "cursor",
+    "gemini",
+    "raycast",
+    "warp",
+    "visual_studio_code",
+    "comet",
+    "superhuman",
+    "bear",
+    "ticktick",
+    "perplexity"
+  ]
+}
