@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Agentic Tools Dashboard</title>
+  <style>
+    /* ── Reset & Variables ───────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #0d0f14;
+      --surface:   #161a24;
+      --surface2:  #1e2435;
+      --surface3:  #252d40;
+      --border:    #2a3352;
+      --accent:    #5b8dee;
+      --accent2:   #7c5ce8;
+      --success:   #2ed8a2;
+      --muted:     #6b7a99;
+      --text:      #e2e8f8;
+      --text-dim:  #8a95b0;
+      --radius:    12px;
+      --radius-sm: 8px;
+      --shadow:    0 4px 24px rgba(0,0,0,.4);
+      --transition: 220ms cubic-bezier(.4,0,.2,1);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+
+    /* ── Header ──────────────────────────────────────────────────── */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(13,15,20,.85);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 32px;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 17px;
+      font-weight: 700;
+      letter-spacing: -.3px;
+      color: var(--text);
+      text-decoration: none;
+      flex-shrink: 0;
+    }
+
+    .logo-icon {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+    }
+
+    .header-right {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .data-badge {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--muted);
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 4px 12px;
+      letter-spacing: .3px;
+    }
+
+    /* ── Search & Filters ───────────────────────────────────────── */
+    .controls {
+      max-width: 1200px;
+      margin: 40px auto 32px;
+      padding: 0 32px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .search-wrap {
+      position: relative;
+      flex: 1;
+      min-width: 240px;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted);
+      pointer-events: none;
+      font-size: 15px;
+    }
+
+    .search-input {
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      font-size: 14px;
+      padding: 10px 14px 10px 40px;
+      outline: none;
+      transition: border-color var(--transition), box-shadow var(--transition);
+    }
+
+    .search-input::placeholder { color: var(--muted); }
+
+    .search-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(91,141,238,.15);
+    }
+
+    .filter-btn {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text-dim);
+      font-size: 13px;
+      font-weight: 500;
+      padding: 10px 16px;
+      cursor: pointer;
+      transition: all var(--transition);
+      white-space: nowrap;
+    }
+
+    .filter-btn:hover { border-color: var(--accent); color: var(--text); }
+
+    .filter-btn.active {
+      background: rgba(91,141,238,.15);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .results-count {
+      font-size: 13px;
+      color: var(--muted);
+      margin-left: 4px;
+    }
+
+    /* ── Stats Bar ──────────────────────────────────────────────── */
+    .stats-bar {
+      max-width: 1200px;
+      margin: 0 auto 32px;
+      padding: 0 32px;
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .stat-card {
+      flex: 1;
+      min-width: 160px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .stat-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .8px;
+      color: var(--muted);
+    }
+
+    .stat-value {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -1px;
+      color: var(--text);
+    }
+
+    .stat-value.accent { color: var(--accent); }
+    .stat-value.green  { color: var(--success); }
+
+    /* ── Main Grid ──────────────────────────────────────────────── */
+    .grid {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 32px 80px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 16px;
+    }
+
+    /* ── Tool Card ──────────────────────────────────────────────── */
+    .tool-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      cursor: pointer;
+      transition: border-color var(--transition), transform var(--transition), box-shadow var(--transition);
+    }
+
+    .tool-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow);
+    }
+
+    .tool-card.expanded {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px rgba(91,141,238,.3), var(--shadow);
+    }
+
+    .tool-card.hidden { display: none; }
+
+    /* Card Header */
+    .card-header {
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .tool-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      flex-shrink: 0;
+      background: var(--surface2);
+    }
+
+    .tool-info { flex: 1; min-width: 0; }
+
+    .tool-name {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      text-transform: capitalize;
+    }
+
+    .tool-name span.replace { /* replaced by JS */ }
+
+    .tool-meta {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    .card-metrics {
+      display: flex;
+      gap: 16px;
+      flex-shrink: 0;
+    }
+
+    .metric {
+      text-align: right;
+    }
+
+    .metric-value {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1;
+    }
+
+    .metric-value.zero { color: var(--muted); }
+
+    .metric-label {
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .6px;
+      color: var(--muted);
+    }
+
+    .chevron {
+      color: var(--muted);
+      font-size: 13px;
+      transition: transform var(--transition);
+      margin-left: 4px;
+    }
+
+    .tool-card.expanded .chevron { transform: rotate(180deg); }
+
+    /* Card Body (Expanded) */
+    .card-body {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 380ms cubic-bezier(.4,0,.2,1);
+    }
+
+    .tool-card.expanded .card-body { max-height: 2000px; }
+
+    .card-inner {
+      border-top: 1px solid var(--border);
+      padding: 20px 24px;
+    }
+
+    .section-title {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .8px;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+
+    /* Connection Pills */
+    .connections-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .conn-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+      transition: border-color var(--transition);
+    }
+
+    .conn-row:hover { border-color: var(--accent); }
+
+    .conn-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent2);
+      flex-shrink: 0;
+    }
+
+    .conn-name {
+      flex: 1;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    .conn-count {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-dim);
+      background: var(--surface3);
+      border-radius: 20px;
+      padding: 2px 10px;
+    }
+
+    .no-connections {
+      font-size: 13px;
+      color: var(--muted);
+      padding: 12px 0;
+      font-style: italic;
+    }
+
+    /* Device chips */
+    .devices-section { margin-top: 4px; }
+
+    .device-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .device-chip {
+      font-size: 11px;
+      color: var(--text-dim);
+      background: var(--surface3);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 3px 10px;
+      cursor: default;
+    }
+
+    .device-chip:hover {
+      border-color: var(--accent);
+      color: var(--text);
+    }
+
+    /* Progress bar */
+    .install-bar-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+    }
+
+    .install-bar-label {
+      font-size: 11px;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .install-bar {
+      flex: 1;
+      height: 4px;
+      background: var(--surface3);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .install-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      border-radius: 4px;
+      transition: width 600ms cubic-bezier(.4,0,.2,1);
+    }
+
+    .install-pct {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-dim);
+      min-width: 34px;
+      text-align: right;
+    }
+
+    /* ── Empty State ────────────────────────────────────────────── */
+    .empty-state {
+      grid-column: 1/-1;
+      text-align: center;
+      padding: 80px 20px;
+      color: var(--muted);
+    }
+
+    .empty-state .empty-icon { font-size: 48px; margin-bottom: 16px; }
+    .empty-state h3 { font-size: 18px; color: var(--text-dim); margin-bottom: 8px; }
+    .empty-state p { font-size: 14px; }
+
+    /* ── Error Banner ───────────────────────────────────────────── */
+    .error-banner {
+      max-width: 1200px;
+      margin: 20px auto;
+      padding: 0 32px;
+    }
+
+    .error-box {
+      background: rgba(239,68,68,.1);
+      border: 1px solid rgba(239,68,68,.4);
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      color: #fca5a5;
+      font-size: 14px;
+    }
+
+    /* ── Loading ────────────────────────────────────────────────── */
+    .loading-overlay {
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      z-index: 999;
+      transition: opacity 400ms;
+    }
+
+    .loading-overlay.fade-out { opacity: 0; pointer-events: none; }
+
+    .spinner {
+      width: 36px;
+      height: 36px;
+      border: 3px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 700ms linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .loading-text { font-size: 14px; color: var(--muted); }
+
+    /* ── Responsive ─────────────────────────────────────────────── */
+    @media (max-width: 640px) {
+      header { padding: 0 16px; }
+      .controls, .stats-bar, .grid { padding-left: 16px; padding-right: 16px; }
+      .grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Loading Overlay -->
+<div class="loading-overlay" id="loading">
+  <div class="spinner"></div>
+  <p class="loading-text">Loading Agentic Tools data…</p>
+</div>
+
+<!-- Header -->
+<header>
+  <a class="logo" href="#">
+    <div class="logo-icon">⚡</div>
+    Agentic Tools
+  </a>
+  <div class="header-right">
+    <span class="data-badge" id="data-date">—</span>
+  </div>
+</header>
+
+<!-- Error banner (hidden by default) -->
+<div class="error-banner" id="error-banner" style="display:none">
+  <div class="error-box" id="error-msg"></div>
+</div>
+
+<!-- Controls -->
+<div class="controls">
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input
+      class="search-input"
+      id="search"
+      type="search"
+      placeholder="Search tools, connections, serial numbers…"
+      autocomplete="off"
+    />
+  </div>
+  <button class="filter-btn active" data-filter="all">All Tools</button>
+  <button class="filter-btn" data-filter="installed">Installed Only</button>
+  <button class="filter-btn" data-filter="connected">Has Connections</button>
+  <span class="results-count" id="results-count"></span>
+</div>
+
+<!-- Stats Bar -->
+<div class="stats-bar" id="stats-bar">
+  <div class="stat-card">
+    <span class="stat-label">Total Devices</span>
+    <span class="stat-value accent" id="stat-devices">—</span>
+  </div>
+  <div class="stat-card">
+    <span class="stat-label">Tools Tracked</span>
+    <span class="stat-value" id="stat-tools">—</span>
+  </div>
+  <div class="stat-card">
+    <span class="stat-label">Unique Connections</span>
+    <span class="stat-value green" id="stat-connections">—</span>
+  </div>
+  <div class="stat-card">
+    <span class="stat-label">Most Installed</span>
+    <span class="stat-value accent" id="stat-top-tool" style="font-size:18px">—</span>
+  </div>
+</div>
+
+<!-- Tool Cards Grid -->
+<main class="grid" id="grid"></main>
+
+<script>
+// ── Configuration ────────────────────────────────────────────────
+const API_BASE = window.location.origin;
+
+const TOOL_ICONS = {
+  claude:           '🤖',
+  chatgpt:          '💬',
+  cursor:           '✏️',
+  gemini:           '♊',
+  raycast:          '🚀',
+  warp:             '⚡',
+  visual_studio_code: '💻',
+  comet:            '☄️',
+  superhuman:       '📧',
+  bear:             '🐻',
+  ticktick:         '✅',
+  perplexity:       '🔍',
+};
+
+const TOOL_LABELS = {
+  visual_studio_code: 'VS Code',
+};
+
+// ── State ────────────────────────────────────────────────────────
+let allTools   = [];  // tool overview data
+let rawDevices = [];  // raw device records
+let totalDevices = 0;
+let activeFilter = 'all';
+let searchQuery  = '';
+
+// ── Bootstrap ───────────────────────────────────────────────────
+async function init() {
+  try {
+    const [toolsRes, devicesRes] = await Promise.all([
+      fetch(`${API_BASE}/api/tools`),
+      fetch(`${API_BASE}/api/data`),
+    ]);
+
+    if (!toolsRes.ok) throw new Error(`API /api/tools returned ${toolsRes.status}`);
+    if (!devicesRes.ok) throw new Error(`API /api/data returned ${devicesRes.status}`);
+
+    allTools   = await toolsRes.json();
+    rawDevices = await devicesRes.json();
+    totalDevices = rawDevices.length;
+
+    // Pick most recent collected_at for the data badge
+    const latest = rawDevices
+      .map(d => d.collected_at)
+      .sort()
+      .reverse()[0];
+    if (latest) {
+      const d = new Date(latest);
+      document.getElementById('data-date').textContent =
+        `Data: ${d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`;
+    }
+
+    renderStats();
+    renderGrid();
+    fadeOutLoading();
+  } catch (err) {
+    showError(err.message);
+    fadeOutLoading();
+  }
+}
+
+function fadeOutLoading() {
+  const el = document.getElementById('loading');
+  el.classList.add('fade-out');
+  setTimeout(() => el.remove(), 450);
+}
+
+function showError(msg) {
+  const banner = document.getElementById('error-banner');
+  document.getElementById('error-msg').innerHTML =
+    `<strong>Could not load data.</strong> Make sure the FastAPI server is running.<br><code>${msg}</code>`;
+  banner.style.display = 'block';
+}
+
+// ── Stats ────────────────────────────────────────────────────────
+function renderStats() {
+  // Count unique connection names across all tools
+  const connSet = new Set();
+  allTools.forEach(t => t.unique_connections.forEach(c => connSet.add(c.name)));
+
+  // Top tool by computer_count
+  const topTool = [...allTools].sort((a,b) => b.computer_count - a.computer_count)[0];
+  const topLabel = topTool
+    ? (TOOL_LABELS[topTool.tool] || capitalize(topTool.tool))
+    : '—';
+
+  document.getElementById('stat-devices').textContent      = totalDevices;
+  document.getElementById('stat-tools').textContent        = allTools.length;
+  document.getElementById('stat-connections').textContent  = connSet.size;
+  document.getElementById('stat-top-tool').textContent     = topLabel;
+}
+
+// ── Grid ─────────────────────────────────────────────────────────
+function renderGrid() {
+  const grid    = document.getElementById('grid');
+  const counter = document.getElementById('results-count');
+  grid.innerHTML = '';
+
+  const filtered = getFilteredTools();
+  counter.textContent = `${filtered.length} tool${filtered.length !== 1 ? 's' : ''}`;
+
+  if (filtered.length === 0) {
+    grid.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">🔭</div>
+        <h3>No tools found</h3>
+        <p>Try adjusting your search or filter.</p>
+      </div>`;
+    return;
+  }
+
+  filtered.forEach(tool => {
+    grid.appendChild(buildCard(tool));
+  });
+}
+
+function getFilteredTools() {
+  let tools = allTools;
+
+  if (activeFilter === 'installed')  tools = tools.filter(t => t.computer_count > 0);
+  if (activeFilter === 'connected')  tools = tools.filter(t => t.unique_connections.length > 0);
+
+  if (searchQuery) {
+    const q = searchQuery.toLowerCase();
+    tools = tools.filter(t => {
+      const label = (TOOL_LABELS[t.tool] || t.tool).toLowerCase();
+      const connNames = t.unique_connections.map(c => c.name.toLowerCase()).join(' ');
+      // Also search device serial numbers / hostnames
+      const deviceStr = rawDevices
+        .filter(d => d.tools[t.tool]?.installed)
+        .map(d => `${d.device.serial_number} ${d.device.hostname} ${d.device.current_user}`)
+        .join(' ')
+        .toLowerCase();
+      return label.includes(q) || connNames.includes(q) || deviceStr.includes(q);
+    });
+  }
+
+  return tools;
+}
+
+function buildCard(tool) {
+  const label   = TOOL_LABELS[tool.tool] || capitalize(tool.tool.replace(/_/g, ' '));
+  const icon    = TOOL_ICONS[tool.tool] || '🔧';
+  const pct     = totalDevices > 0 ? Math.round((tool.computer_count / totalDevices) * 100) : 0;
+  const numConn = tool.unique_connections.length;
+
+  // Installed devices
+  const installedDevices = rawDevices.filter(d => d.tools[tool.tool]?.installed);
+
+  const card = document.createElement('div');
+  card.className = 'tool-card';
+  card.dataset.tool = tool.tool;
+
+  card.innerHTML = `
+    <div class="card-header">
+      <div class="tool-icon">${icon}</div>
+      <div class="tool-info">
+        <div class="tool-name">${label}</div>
+        <div class="tool-meta">${tool.tool}</div>
+      </div>
+      <div class="card-metrics">
+        <div class="metric">
+          <div class="metric-value ${tool.computer_count === 0 ? 'zero' : ''}">${tool.computer_count}</div>
+          <div class="metric-label">Devices</div>
+        </div>
+        <div class="metric">
+          <div class="metric-value ${numConn === 0 ? 'zero' : ''}">${numConn}</div>
+          <div class="metric-label">Connections</div>
+        </div>
+      </div>
+      <span class="chevron">▼</span>
+    </div>
+
+    <div class="card-body">
+      <div class="card-inner">
+
+        <div class="section-title">Connections &amp; Extensions</div>
+        <div class="connections-list">
+          ${buildConnectionRows(tool.unique_connections)}
+        </div>
+
+        <div class="section-title devices-section">Installed On</div>
+        <div class="device-chips">
+          ${buildDeviceChips(installedDevices)}
+        </div>
+
+        <div class="install-bar-wrap">
+          <span class="install-bar-label">Fleet coverage</span>
+          <div class="install-bar">
+            <div class="install-bar-fill" style="width:${pct}%"></div>
+          </div>
+          <span class="install-pct">${pct}%</span>
+        </div>
+
+      </div>
+    </div>
+  `;
+
+  card.addEventListener('click', () => toggleCard(card));
+  return card;
+}
+
+function buildConnectionRows(connections) {
+  if (connections.length === 0) {
+    return `<div class="no-connections">No connections or extensions configured</div>`;
+  }
+  return connections.map(c => `
+    <div class="conn-row">
+      <div class="conn-dot"></div>
+      <span class="conn-name">${c.name}</span>
+      <span class="conn-count">${c.computer_count} computer${c.computer_count !== 1 ? 's' : ''}</span>
+    </div>
+  `).join('');
+}
+
+function buildDeviceChips(devices) {
+  if (devices.length === 0) return `<span style="font-size:13px;color:var(--muted);font-style:italic">Not installed on any device</span>`;
+  return devices.map(d => `
+    <div class="device-chip" title="${d.device.serial_number} · ${d.device.current_user}">${d.device.hostname}</div>
+  `).join('');
+}
+
+function toggleCard(card) {
+  const isExpanded = card.classList.contains('expanded');
+  // Collapse all
+  document.querySelectorAll('.tool-card.expanded').forEach(c => c.classList.remove('expanded'));
+  // Expand clicked one (unless it was already open)
+  if (!isExpanded) {
+    card.classList.add('expanded');
+    setTimeout(() => card.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 50);
+  }
+}
+
+// ── Filters & Search ─────────────────────────────────────────────
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    activeFilter = btn.dataset.filter;
+    renderGrid();
+  });
+});
+
+let searchTimer;
+document.getElementById('search').addEventListener('input', e => {
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(() => {
+    searchQuery = e.target.value.trim();
+    renderGrid();
+  }, 180);
+});
+
+// ── Utilities ────────────────────────────────────────────────────
+function capitalize(str) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+// ── Start ────────────────────────────────────────────────────────
+init();
+</script>
+</body>
+</html>
