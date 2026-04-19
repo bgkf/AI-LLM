@@ -1,0 +1,157 @@
+{
+  "_comment": "Query intent synonym table for select_tool() in dashboard/server.py. Edit this file to add new phrases without touching Python code. Matching is case-insensitive and checks if any phrase appears anywhere in the prompt.",
+
+  "tool_search_events": {
+    "failed_login": [
+      "failed login", "failed logins", "login failure", "login failures",
+      "failed sign in", "failed sign-in", "sign in failed", "sign-in failed",
+      "authentication failed", "authentication failure", "auth failed",
+      "unable to login", "unable to sign in", "can't log in", "cannot log in",
+      "unsuccessful login", "unsuccessful logins", "bad password attempts",
+      "invalid credentials"
+    ],
+    "mfa_failure": [
+      "mfa", "multi-factor", "multifactor", "two-factor", "2fa",
+      "suspicious", "challenge", "push denied", "push notification denied",
+      "authenticator failed", "authenticator failure", "factor failed",
+      "mfa challenge", "mfa failure", "mfa failures", "mfa denied",
+      "verify failed", "verification failed"
+    ]
+  },
+
+  "tool_get_audit_logs": [
+    "audit", "audit log", "audit logs", "system log", "system logs",
+    "event", "events", "log", "logs", "activity", "activity log",
+    "history", "recent activity", "what happened", "actions taken"
+  ],
+
+  "tool_list_apps": [
+    "app", "apps", "application", "applications", "assignment", "assignments",
+    "software", "tool", "tools", "saml", "sso", "single sign-on",
+    "integrated app", "integrated apps", "app catalog", "assigned app",
+    "assigned apps", "provisioned app", "provisioned apps"
+  ],
+
+  "tool_get_policy": {
+    "PASSWORD": [
+      "password policy", "password policies", "password rule", "password rules",
+      "password requirement", "password requirements", "password complexity",
+      "password settings", "password length", "password expiry", "password expiration"
+    ],
+    "OKTA_SIGN_ON": [
+      "sign on policy", "sign-on policy", "sign on policies", "sign-on policies",
+      "signon policy", "login policy", "login policies", "authentication policy",
+      "authentication policies", "access policy", "access policies"
+    ],
+    "MFA_ENROLL": [
+      "mfa enroll", "mfa enrollment", "mfa policy", "factor policy",
+      "factor enrollment", "authenticator policy", "enrollment policy"
+    ],
+    "PROFILE_ENROLLMENT": [
+      "profile enrollment", "profile policy", "registration policy",
+      "self-service registration", "self service registration"
+    ]
+  },
+
+  "tool_get_group": [
+    "group", "groups", "team", "members of", "who is in", "users in the",
+    "belongs to", "member of"
+  ],
+  
+  "tool_list_devices": [
+    "device", "devices", "managed device", "managed devices",
+    "laptop", "laptops", "mac", "macbook", "computer", "computers",
+    "enrolled device", "enrolled devices", "mdm device",
+    "device inventory", "device list", "hardware"
+  ],
+
+  "tool_get_device_users": [
+    "who is on device", "who was on device", "device users",
+    "users on device", "signed into device", "logged into device",
+    "device id", "who used this device"
+  ],
+
+  "tool_list_iam_roles": [
+    "iam", "admin role", "admin roles", "iam role", "iam roles",
+    "who has admin", "admin access", "administrator", "administrators",
+    "resource set", "resource sets", "scoped admin", "privileged access",
+    "super admin", "org admin", "read only admin"
+  ],
+
+  "tool_list_oauth_clients": [
+    "oauth", "oauth client", "oauth clients", "oidc",
+    "api client", "api clients", "registered app", "registered apps",
+    "client credentials", "service account app", "oauth registration",
+    "connected app", "connected apps", "api access"
+  ],
+
+  "tool_get_user_sessions": [
+    "session", "sessions", "active session", "active sessions",
+    "signed in", "logged in", "currently logged in", "still signed in",
+    "where is user logged in", "user sessions", "open sessions"
+  ],
+
+  "tool_get_user_factors": [
+    "mfa factors", "enrolled factors", "user factors", "authenticator",
+    "authenticators", "has mfa", "mfa enrolled", "factor enrolled",
+    "mfa setup", "mfa configured", "two factor", "2fa",
+    "push enrolled", "totp enrolled", "webauthn"
+  ],
+
+  "tool_list_entitlements": [
+    "entitlement", "entitlements", "entitlement list",
+    "what entitlements exist", "available entitlements",
+    "grants", "active grants", "list grants"
+  ],
+
+  "tool_get_principal_access": [
+    "principal access", "what can user access", "what does user have access to",
+    "user resources", "access for user", "resources for principal",
+    "over-provisioned", "overprivileged", "excessive access"
+  ],
+
+  "tool_get_entitlement_history": [
+    "entitlement history", "access history", "when did user get access",
+    "when was access granted", "when was access revoked", "access changes",
+    "entitlement changes", "access log", "provisioning history",
+    "deprovisioning history", "access audit trail"
+  ],
+
+  "tool_list_access_reviews": [
+    "access review", "access reviews", "security access review",
+    "certification campaign", "review campaign", "in flight reviews",
+    "pending reviews", "open reviews", "completed reviews",
+    "governance review", "access certification"
+  ],
+
+  "tool_list_users": {
+    "LOCKED_OUT": [
+      "locked", "locked out", "account locked", "locked account",
+      "locked accounts", "can't log in", "cannot log in", "login blocked",
+      "access blocked", "blocked user", "blocked users"
+    ],
+    "DEPROVISIONED": [
+      "deprovisioned", "deprovision", "offboarded", "offboard",
+      "terminated", "termination", "removed user", "removed users",
+      "deleted user", "deleted users", "inactive account", "inactive accounts",
+      "no longer active", "ex-employee", "ex employee", "former employee",
+      "former employees", "left the company", "churned user"
+    ],
+    "SUSPENDED": [
+      "suspended", "suspend", "disabled", "disable",
+      "disabled user", "disabled users", "suspended user", "suspended users",
+      "paused account", "paused accounts", "on hold"
+    ],
+    "PASSWORD_EXPIRED": [
+      "password expired", "expired password", "password expiry",
+      "needs to reset password", "needs password reset", "password reset required",
+      "expired credentials", "must change password"
+    ],
+    "ACTIVE": [
+      "active", "active user", "active users", "enabled user", "enabled users",
+      "current user", "current users", "all users", "everyone",
+      "list users", "show users", "get users", "who has access",
+      "who is active", "users with access"
+    ]
+  }
+}
