@@ -1,9 +1,0 @@
-{
-  "port": 8080,
-  "apfel_port": 11434,
-  "token_budget": 4096,
-  "default_result_limit": 25,
-  "max_result_limit": 500,
-  "system_prompt_path": "intelligence/system-prompt.txt",
-  "mcp_server_path": "data/okta-mcp-server/start.sh"
-}
