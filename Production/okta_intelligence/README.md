@@ -1,6 +1,6 @@
-# Okta Intelligence Dashboard
+# Okta MCP Dashboard
 
-A local macOS dashboard that combines **apfel** (Apple's on-device LLM via FoundationModels) with an **Okta MCP server** to give your IT team a natural language interface for querying Okta data. All inference runs on-device. No external API keys required for the LLM.
+A local macOS dashboard that combines **apfel** (Apple's on-device LLM via FoundationModels) with the **Okta MCP server** for using natural language to query Okta data. All inference runs on-device. No external API keys required for the LLM.
 
 ---
 
