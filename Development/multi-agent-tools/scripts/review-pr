@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+_resolve() {
+    local path="$1"
+    while [[ -L "$path" ]]; do
+        path="$(cd "$(dirname "$path")" && readlink "$path")"
+        [[ "$path" = /* ]] || path="$(cd "$(dirname "$1")" && pwd)/$path"
+    done
+    echo "$(cd "$(dirname "$path")" && pwd)/$(basename "$path")"
+}
+
+REAL_SCRIPT="$(_resolve "${BASH_SOURCE[0]}")"
+SCRIPT_DIR="$(dirname "$REAL_SCRIPT")"
+PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
+PYTHON="$PROJECT_ROOT/.venv/bin/python"
+CALLER_DIR="$(pwd)"
+
+if [[ ! -x "$PYTHON" ]]; then
+    echo "error: venv not found at $PROJECT_ROOT/.venv" >&2
+    echo "       run: cd $PROJECT_ROOT && uv venv && uv sync" >&2
+    exit 1
+fi
+
+cd "$PROJECT_ROOT"
+exec "$PYTHON" -m pr_review --caller-dir "$CALLER_DIR" "$@"

@@ -1,0 +1,29 @@
+[project]
+name = "multi-agent-tools"
+version = "0.1.0"
+description = "Multi-agent PR review and codebase Q&A tools"
+requires-python = ">=3.9"
+
+dependencies = [
+    "anthropic>=0.40.0",
+    "openai>=1.0.0",
+]
+
+[project.scripts]
+review-pr    = "pr_review.__main__:main"
+ask-codebase = "codeqa.__main__:main"
+
+[build-system]
+requires      = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["shared", "pr_review", "codeqa"]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0",
+    "pytest-asyncio",
+    "ruff",
+    "mypy",
+]
