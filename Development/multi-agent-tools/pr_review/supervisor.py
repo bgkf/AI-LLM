@@ -5,18 +5,31 @@ Supervisor for the PR review agent system.
 
 Responsibilities:
   1. Parse the git diff into per-file chunks
-  2. Fan out to all specialist agents concurrently (per file × per agent)
-  3. Collect AgentResult objects and aggregate findings
-  4. Pass aggregated findings to the selected renderer
+  2. Phase 1 — Fan out to all specialist agents concurrently (file × agent)
+  3. Phase 2 — Deliberation: compute corroboration, conflicts, confidence
+  4. Aggregate and return enriched findings
 
-Architecture: supervisor-worker with concurrent fan-out.
-Each (file, agent) pair is an independent unit of work.
-A failure in one does not affect the others.
+Architecture: two-phase supervisor-worker.
+
+  Phase 1: parallel specialist pass
+    Each (file, agent) pair is an independent unit of work.
+    Findings are written to a SharedFindingStore as agents complete.
+    A failure in one agent does not affect the others.
+
+  Phase 2: deliberation
+    The supervisor reads the SharedFindingStore and computes:
+      - corroborated findings: multiple agents flagged the same line
+      - conflicted findings:   agents disagree on severity for the same line
+      - confidence scores:     single agent = 0.5, full agreement = 0.95
+    This phase runs synchronously after Phase 1 completes.
+    It is implemented as a pure function (deliberate()) so it can be
+    extracted to a dedicated consensus-agent later without changing
+    the supervisor's interface.
 
 Entry points:
   review_diff(diff_text)     — review a diff string directly
   review_staged()            — review `git diff --staged`
-  review_pr(owner, repo, pr) — review a GitHub PR (requires GITHUB_TOKEN)
+  review_commit(sha)         — review a specific commit
 """
 
 from __future__ import annotations
@@ -30,11 +43,24 @@ import concurrent.futures
 import logging
 import time
 from dataclasses import dataclass, field
-from typing import Callable
+from typing import Callable, Optional
 
 from shared.llm import Provider
 from shared.findings import Finding, AgentResult
 from pr_review.agents import logic, security, style, tests, docs
+
+# SharedFindingStore and deliberation are optional — the module works without
+# them, falling back to the original single-phase behaviour.
+try:
+    from shared.finding_store import SharedFindingStore, EnrichedFinding
+    from pr_review.deliberation import deliberate, DeliberationConfig, DeliberationSummary
+    _HAS_DELIBERATION = True
+except ImportError:
+    SharedFindingStore = None       # type: ignore[assignment,misc]
+    EnrichedFinding    = None       # type: ignore[assignment,misc]
+    DeliberationConfig = None       # type: ignore[assignment,misc]
+    DeliberationSummary = None      # type: ignore[assignment,misc]
+    _HAS_DELIBERATION  = False
 
 log = logging.getLogger(__name__)
 
@@ -71,7 +97,8 @@ def parse_diff(diff_text: str) -> dict[str, str]:
 
     Accumulates all lines between consecutive "diff --git" headers,
     then extracts the filename from the "+++ b/" line within each block.
-    This handles both "git diff" and "git show" output formats correctly.
+    This handles both "git diff" and "git show" output formats correctly,
+    and correctly includes the "diff --git" header line in each file's chunk.
     """
     # Split into per-file blocks on "diff --git" boundaries
     blocks: list[list[str]] = []
@@ -94,7 +121,7 @@ def parse_diff(diff_text: str) -> dict[str, str]:
             if line.startswith("+++ b/"):
                 filename = line[6:].strip()
                 break
-            # Handle renames and new files: "+++ /dev/null" means deletion — skip
+            # "+++ /dev/null" means deletion — skip
             if line.startswith("+++ /dev/null"):
                 break
 
@@ -104,17 +131,31 @@ def parse_diff(diff_text: str) -> dict[str, str]:
     return files
 
 
-# ── Aggregated review result ──────────────────────────────────────────────────
+# ── ReviewResult ──────────────────────────────────────────────────────────────
 
 @dataclass
 class ReviewResult:
+    """
+    Complete output of one review run.
+
+    When the deliberation layer is available, enriched_findings carries
+    corroboration and conflict metadata. The plain findings list is always
+    populated for backwards compatibility with renderers and callers that
+    access result.findings directly.
+    """
     files_reviewed:  int
     files_skipped:   int
-    agent_results:   list[AgentResult]      = field(default_factory=list)
-    findings:        list[Finding]          = field(default_factory=list)
-    failed_agents:   list[str]              = field(default_factory=list)
-    duration:        float                  = 0.0
-    total_tokens:    int                    = 0
+    agent_results:   list[AgentResult]       = field(default_factory=list)
+    findings:        list[Finding]           = field(default_factory=list)
+
+    # Deliberation fields — populated when _HAS_DELIBERATION is True
+    enriched_findings: list                  = field(default_factory=list)  # list[EnrichedFinding]
+    deliberation:    object                  = None   # Optional[DeliberationSummary]
+    store:           object                  = None   # Optional[SharedFindingStore]
+
+    failed_agents:   list[str]               = field(default_factory=list)
+    duration:        float                   = 0.0
+    total_tokens:    int                     = 0
 
     @property
     def error_count(self) -> int:
@@ -132,10 +173,17 @@ class ReviewResult:
     def has_blockers(self) -> bool:
         return self.error_count > 0
 
+    @property
+    def corroborated_count(self) -> int:
+        return sum(1 for f in self.enriched_findings if f.is_corroborated)
+
+    @property
+    def conflict_count(self) -> int:
+        return sum(1 for f in self.enriched_findings if f.has_conflict)
+
 
 # ── Supervisor ────────────────────────────────────────────────────────────────
 
-# All registered agents: (role_name, run_function)
 AGENTS: list[tuple[str, Callable]] = [
     ("logic",    logic.run),
     ("security", security.run),
@@ -146,26 +194,44 @@ AGENTS: list[tuple[str, Callable]] = [
 
 
 def review_diff(
-    diff_text:    str,
-    provider:     Provider = Provider.ANTHROPIC,
-    agents:       list[str] | None = None,   # None = run all
-    max_workers:  int = 10,
+    diff_text:           str,
+    provider:            Provider = Provider.ANTHROPIC,
+    agents:              Optional[list[str]] = None,
+    max_workers:         int = 10,
+    deliberation_config: object = None,  # Optional[DeliberationConfig]
 ) -> ReviewResult:
     """
-    Core supervisor function. Takes a unified diff string and returns
-    a ReviewResult with all findings from all agents.
+    Core supervisor function.
+
+    When the deliberation layer is available, runs two phases:
+
+      Phase 1: Concurrent specialist analysis
+        - Parse diff into per-file chunks
+        - Fan out all (file × agent) pairs to a ThreadPool
+        - Write findings to SharedFindingStore as agents complete
+
+      Phase 2: Deliberation
+        - Group findings by (file, line)
+        - Compute corroboration and conflict metadata
+        - Enrich findings with confidence scores
+
+    Without the deliberation layer, only Phase 1 runs and findings are
+    aggregated directly — matching the original single-phase behaviour.
 
     Parameters
     ----------
-    diff_text   : unified diff (from git diff, GitHub API, etc.)
-    provider    : LLM provider to use for all agents
-    agents      : list of agent names to run; None = all agents
-    max_workers : max concurrent threads (one per file×agent pair)
+    diff_text            : unified diff string
+    provider             : LLM provider for all agents
+    agents               : agent names to run; None = all
+    max_workers          : max concurrent threads
+    deliberation_config  : Phase 2 settings; uses defaults if None
     """
     start = time.time()
 
-    # Parse diff into per-file chunks
-    total_in_diff = diff_text.count("\ndiff --git ") + (1 if diff_text.startswith("diff --git ") else 0)
+    # Count total files in diff before filtering, for accurate skipped count
+    total_in_diff = diff_text.count("\ndiff --git ") + (
+        1 if diff_text.startswith("diff --git ") else 0
+    )
     file_diffs    = parse_diff(diff_text)
     files_skipped = max(0, total_in_diff - len(file_diffs))
 
@@ -173,27 +239,27 @@ def review_diff(
         log.info("No reviewable files found in diff")
         return ReviewResult(files_reviewed=0, files_skipped=files_skipped)
 
-    # Select agents to run
     active_agents = [
         (name, fn) for name, fn in AGENTS
         if agents is None or name in agents
     ]
 
     log.info(
-        "Reviewing %d file(s) with %d agent(s) [%s]",
+        "Phase 1: reviewing %d file(s) with %d agent(s) [%s]",
         len(file_diffs), len(active_agents),
-        ", ".join(n for n, _ in active_agents)
+        ", ".join(n for n, _ in active_agents),
     )
 
-    # Build work items: (filename, diff, agent_name, agent_fn)
+    # ── Phase 1: Parallel specialist pass ─────────────────────────────────────
+
+    store = SharedFindingStore() if _HAS_DELIBERATION else None
+    all_results: list[AgentResult] = []
+
     work_items = [
         (filename, diff, agent_name, agent_fn)
         for filename, diff in file_diffs.items()
         for agent_name, agent_fn in active_agents
     ]
-
-    # Fan out — all work items run concurrently
-    all_results: list[AgentResult] = []
 
     with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as pool:
         future_to_item = {
@@ -206,53 +272,119 @@ def review_diff(
             try:
                 result = future.result()
             except Exception as exc:
-                # Safety net — agents should never raise, but just in case
                 log.error("Unexpected exception from %s on %s: %s",
                           agent_name, filename, exc)
                 result = AgentResult(
                     agent=agent_name, ok=False,
-                    error=f"unexpected: {exc}"
+                    error=f"unexpected: {exc}",
                 )
             all_results.append(result)
+
+            # Stamp agent name and write to shared store (deliberation path)
+            for f in result.findings:
+                f.agent = agent_name
+                if store is not None:
+                    store.append(f)
+
             status = "✓" if result.ok else "✗"
             log.debug(
                 "  %s [%s] %s — %d finding(s)",
-                status, result.agent, filename,
-                len(result.findings)
+                status, result.agent, filename, len(result.findings),
             )
 
-    # Aggregate
-    all_findings: list[Finding] = []
+    # ── Phase 2: Deliberation (when available) ────────────────────────────────
+
+    enriched: list = []
+    delib_summary = None
+
+    if _HAS_DELIBERATION and store is not None:
+        log.info(
+            "Phase 1 complete: %d findings across %d agents",
+            store.size(), len(active_agents),
+        )
+        log.info("Phase 2: deliberation over %d findings", store.size())
+
+        agent_runners = {name: fn for name, fn in active_agents}
+        enriched = deliberate(
+            store=store,
+            config=deliberation_config,
+            agent_runners=agent_runners,
+        )
+
+        delib_summary = DeliberationSummary.from_enriched(enriched, store)
+        log.info(
+            "Phase 2 complete: %d corroborated, %d conflicted, %d high-confidence",
+            delib_summary.corroborated_count,
+            delib_summary.conflicted_count,
+            delib_summary.high_confidence,
+        )
+
+    # ── Aggregate ─────────────────────────────────────────────────────────────
+
     failed: list[str] = []
     total_tokens = 0
 
     for result in all_results:
-        all_findings.extend(result.findings)
         total_tokens += result.tokens
         if not result.ok:
             failed.append(f"{result.agent}: {result.error}")
 
-    # Sort findings: errors first, then by file, then by line
-    all_findings.sort(key=lambda f: (
-        {"error": 0, "warning": 1, "info": 2}.get(f.severity, 3),
-        f.file,
-        f.line or 0,
-    ))
+    # Build the plain Finding list.
+    # When enriched findings are available, derive the plain list from them
+    # so both lists stay in sync. Otherwise, aggregate directly from agents.
+    if enriched:
+        # Sort enriched: errors first, corroborated errors bubble up, then file/line
+        enriched.sort(key=lambda f: (
+            {"error": 0, "warning": 1, "info": 2}.get(f.severity, 3),
+            0 if f.is_corroborated else 1,
+            f.file,
+            f.line or 0,
+        ))
+
+        all_findings = [
+            Finding(
+                message    = ef.message,
+                file       = ef.file,
+                severity   = ef.severity,
+                line       = ef.line,
+                suggestion = ef.suggestion,
+                agent      = ef.agent,
+                context    = ef.context,
+            )
+            for ef in enriched
+        ]
+    else:
+        # Single-phase path: aggregate findings directly from agent results
+        all_findings = []
+        for result in all_results:
+            all_findings.extend(result.findings)
+
+        # Sort: errors first, then by file, then by line
+        all_findings.sort(key=lambda f: (
+            {"error": 0, "warning": 1, "info": 2}.get(f.severity, 3),
+            f.file,
+            f.line or 0,
+        ))
 
     return ReviewResult(
-        files_reviewed = len(file_diffs),
-        files_skipped  = files_skipped,
-        agent_results  = all_results,
-        findings       = all_findings,
-        failed_agents  = failed,
-        duration       = time.time() - start,
-        total_tokens   = total_tokens,
+        files_reviewed    = len(file_diffs),
+        files_skipped     = files_skipped,
+        agent_results     = all_results,
+        findings          = all_findings,
+        enriched_findings = enriched,
+        deliberation      = delib_summary,
+        store             = store,
+        failed_agents     = failed,
+        duration          = time.time() - start,
+        total_tokens      = total_tokens,
     )
 
 
-def review_staged(provider: Provider = Provider.ANTHROPIC,
-                  agents: list[str] | None = None,
-                  cwd: str | None = None) -> ReviewResult:
+def review_staged(
+    provider: Provider = Provider.ANTHROPIC,
+    agents:   Optional[list[str]] = None,
+    cwd:      Optional[str] = None,
+) -> ReviewResult:
     """Review the currently staged git changes."""
     try:
         diff = subprocess.check_output(
@@ -266,16 +398,19 @@ def review_staged(provider: Provider = Provider.ANTHROPIC,
 
     if not diff.strip():
         raise RuntimeError(
-            "No staged changes found. Run `git add` first, or use --diff to pass a diff file."
+            "No staged changes found. Run `git add` first, "
+            "or use --diff to pass a diff file."
         )
 
     return review_diff(diff, provider=provider, agents=agents)
 
 
-def review_commit(commit: str = "HEAD",
-                  provider: Provider = Provider.ANTHROPIC,
-                  agents: list[str] | None = None,
-                  cwd: str | None = None) -> ReviewResult:
+def review_commit(
+    commit:  str = "HEAD",
+    provider: Provider = Provider.ANTHROPIC,
+    agents:  Optional[list[str]] = None,
+    cwd:     Optional[str] = None,
+) -> ReviewResult:
     """Review the changes in a specific commit."""
     try:
         has_parent = subprocess.call(

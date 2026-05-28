@@ -5,14 +5,18 @@ Specialist agent: style and formatting review.
 
 Looks for:
   - Naming convention violations (snake_case/camelCase per language)
+  - Inconsistent naming conventions (snake_case vs camelCase mixing)
   - Line length violations
   - Inconsistent indentation
   - Unused imports or variables in added code
   - Magic numbers without named constants
   - Overly complex expressions that should be broken up
   - Missing or malformed docstrings / comments
-  - Dead code in additions (commented-out code, print debug statements)
+  - Dead code in additions (commented-out code, unreachable branches,
+    print debug statements)
   - Inconsistent string quoting within the same file
+  - Overly long functions added in this diff (> 50 lines)
+  - Inconsistent formatting that a linter would catch
 
 Uses haiku — style is pattern-matching, not deep reasoning.
 Fast and cheap is the right tradeoff here.
@@ -38,6 +42,15 @@ the conventions of its language and the surrounding codebase.
 Review unified diffs. Only comment on added lines (starting with +).
 Be concise. Do not flag things that are stylistic preferences without a clear
 community standard — only flag genuine violations.
+
+Focus on: inconsistent naming conventions (snake_case vs camelCase mixing),
+magic numbers without named constants, dead code (unused imports, unreachable
+branches, commented-out or debug print statements), overly long functions added
+in this diff (> 50 lines), line length violations, inconsistent indentation,
+and inconsistent formatting that a linter would catch.
+
+Do NOT flag: logic errors, security issues, missing tests or docs.
+Do NOT suggest adding comments for self-explanatory code.
 
 Return ONLY a JSON array of findings. If no style issues, return: []
 
@@ -104,6 +117,9 @@ def run(
         findings = parse_findings_from_json(resp.content, filename)
         for f in findings:
             f.agent = ROLE
+            # Style agent can only emit warning/info — downgrade any errors
+            if f.severity == "error":
+                f.severity = "warning"
 
         duration = time.time() - start
         log.debug("[style] %s — %d finding(s) in %.1fs", filename, len(findings), duration)
@@ -115,3 +131,4 @@ def run(
         duration = time.time() - start
         log.error("[style] failed on %s: %s", filename, exc)
         return AgentResult(agent=ROLE, ok=False, findings=[], error=str(exc), duration=duration)
+

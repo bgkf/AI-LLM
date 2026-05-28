@@ -5,16 +5,18 @@ Specialist agent: logic and correctness review.
 
 Looks for:
   - Off-by-one errors and boundary condition bugs
-  - Null / None dereference risks
-  - Incorrect conditionals or inverted logic
-  - Resource leaks (files, connections, locks not closed)
-  - Async/concurrency issues (race conditions, missing awaits)
-  - Error handling gaps (bare except, swallowed exceptions)
+  - Null / None dereference risks on unguarded paths
+  - Resource leaks (files, connections, sockets not closed in all paths)
+  - Async/concurrency issues (missing await, unawaited coroutines, blocking
+    calls in async context)
+  - Error handling gaps (bare except, swallowed exceptions, silent continues)
+  - Incorrect boolean logic (De Morgan errors, always-true/false conditions)
+  - Mutating a collection while iterating over it
   - Unreachable code or dead branches
   - Type mismatches that type checkers might miss at runtime
 
-Uses the smarter model (sonnet) — logic review benefits most from
-deeper reasoning. This is the agent most likely to catch real bugs.
+Uses the smarter model (Sonnet) — logic errors are expensive to miss and
+benefit most from deeper reasoning.
 
 Does NOT look for:
   - Style issues (that's style.py)
@@ -36,30 +38,41 @@ log = logging.getLogger(__name__)
 
 ROLE = "logic"
 
-SYSTEM_PROMPT = """You are an expert code reviewer specialising in logic correctness and runtime bugs.
-
-Your job is to find real bugs — not style issues, not security issues, not test coverage gaps.
-Focus on problems that would cause incorrect behaviour at runtime.
+SYSTEM_PROMPT = """You are a senior software engineer specialising in logic and correctness review.
+You are reviewing a git diff. Your job is to find real bugs — not style issues, not missing
+docs, not test gaps. Only flag things that could cause incorrect behaviour at runtime.
 
 You review unified diffs. Lines starting with + are additions. Lines starting with - are removals.
 Only comment on added lines (starting with +) unless a removal creates a new bug by itself.
 
-Return ONLY a JSON array of findings. No prose, no markdown, no explanation outside the JSON.
-If there are no issues, return an empty array: []
+Focus on:
+- Off-by-one errors and boundary conditions
+- Null / None dereferences on unguarded paths
+- Resource leaks (files, connections, sockets not closed in all paths)
+- Async/await misuse (missing await, unawaited coroutines, blocking calls in async context)
+- Swallowed exceptions (bare except, except: pass, logging error then continuing silently)
+- Incorrect boolean logic (De Morgan errors, always-true/false conditions)
+- Mutating a collection while iterating over it
+- Unreachable code or dead branches
+- Type mismatches that type checkers might miss at runtime
 
-Each finding must have this exact shape:
-{
-  "severity": "error" | "warning" | "info",
-  "line": <line number in the diff, integer or null>,
-  "message": "<what is wrong, one clear sentence>",
-  "suggestion": "<concrete fix, one clear sentence>",
-  "context": "<the specific line(s) of code this refers to>"
-}
+Do NOT report: style issues, missing docstrings, test coverage, formatting.
+
+Return ONLY a JSON array. Each element must have:
+  "message":    string — what the bug is (be specific, reference the code)
+  "file":       string — filename
+  "severity":   "error" | "warning" | "info"
+  "line":       integer | null — line number in the diff (+ lines)
+  "suggestion": string — concrete fix (not just "fix this")
+  "context":    string | null — the relevant code snippet
 
 Severity guide:
   error   — will cause a crash, data corruption, or incorrect output at runtime
   warning — likely to cause problems in edge cases or under load
-  info    — worth knowing, but not urgent"""
+  info    — worth knowing, but not urgent
+
+If no logic issues found, return [].
+Do not include markdown fences. Return raw JSON only."""
 
 
 USER_PROMPT_TEMPLATE = """Review this diff for logic and correctness issues.
@@ -108,7 +121,7 @@ def run(
     -------
     AgentResult — always returned, never raises
     """
-    start = time.time()
+    start = time.monotonic()
 
     if not diff.strip():
         return AgentResult(agent=ROLE, ok=True, findings=[],
@@ -125,7 +138,7 @@ def run(
             prompt,
             system      = SYSTEM_PROMPT,
             provider    = provider,
-            model       = model_for_role(ROLE),
+            model       = model_for_role(ROLE) if provider == Provider.ANTHROPIC else None,
             max_tokens  = 2048,
             temperature = 0.1,    # very low — we want consistent analysis
         )
@@ -136,10 +149,10 @@ def run(
         for f in findings:
             f.agent = ROLE
 
-        duration = time.time() - start
+        duration = time.monotonic() - start
         log.debug(
             "[logic] %s — %d finding(s) in %.1fs (%d tokens)",
-            filename, len(findings), duration, resp.total_tokens
+            filename, len(findings), duration, resp.total_tokens,
         )
 
         return AgentResult(
@@ -151,7 +164,7 @@ def run(
         )
 
     except Exception as exc:
-        duration = time.time() - start
+        duration = time.monotonic() - start
         log.error("[logic] failed on %s: %s", filename, exc)
         return AgentResult(
             agent    = ROLE,

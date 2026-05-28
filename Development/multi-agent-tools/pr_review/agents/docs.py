@@ -7,9 +7,17 @@ Looks for:
   - Public functions / methods / classes with no docstring
   - Docstrings that don't match the current signature (stale docs)
   - Missing parameter or return type documentation
+  - Parameter types or return types missing from existing docstrings
+    when new parameters were added
   - Complex logic with no inline explanation
-  - README or changelog that should be updated but wasn't
+  - README or changelog sections that reference removed functionality
+    or should be updated for changed behaviour
+  - Public APIs that changed their behaviour without updating their docs
   - Exported symbols with no usage example
+
+Only flags documentation gaps for code ADDED in this diff.
+Does not flag pre-existing undocumented code unless the diff touched it.
+Does not flag private functions (starting with _) or test functions.
 
 Uses haiku — documentation review is pattern recognition,
 not deep reasoning. Fast is the right tradeoff here.
@@ -36,9 +44,14 @@ Review unified diffs. Focus on added lines (starting with +).
 
 Flag:
   - Public APIs (functions, classes, methods) with no docstring
-  - Docstrings that clearly don't match the current code
+  - Docstrings that clearly don't match the current code or are stale
   - Non-obvious logic with no explanation
   - Parameters or return values that aren't documented
+  - README sections that reference removed functionality
+  - Public APIs that changed their behaviour without updating their docs
+
+Only flag documentation gaps for code ADDED in this diff.
+Do not flag pre-existing undocumented code unless the diff touched it.
 
 Do NOT flag:
   - Private helpers (leading underscore) unless they're complex
@@ -52,11 +65,12 @@ Each finding:
   "severity": "warning" | "info",
   "line": <integer or null>,
   "message": "<what documentation is missing or wrong>",
-  "suggestion": "<what should be documented and how>",
-  "context": "<the undocumented code>"
+  "suggestion": "<what should be documented and how — one-sentence example is ideal>",
+  "context": "<the undocumented code or function/class signature>"
 }
 
-Limit to 5 findings maximum. Prioritise public APIs over internals."""
+Limit to 5 findings maximum. Prioritise public APIs over internals.
+Docs issues are never "error" severity."""
 
 
 USER_PROMPT_TEMPLATE = """Review documentation in this diff.
@@ -109,6 +123,9 @@ def run(
         findings = parse_findings_from_json(resp.content, filename)
         for f in findings:
             f.agent = ROLE
+            # Docs agent can only emit warning/info — downgrade any errors
+            if f.severity == "error":
+                f.severity = "warning"
 
         duration = time.time() - start
         log.debug("[docs] %s — %d finding(s) in %.1fs", filename, len(findings), duration)

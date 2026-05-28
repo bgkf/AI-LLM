@@ -1,4 +1,4 @@
-# multi-agent-tools
+ # multi-agent-tools
 
 A pair of CLI tools built on a multi-agent architecture. Each tool fans out to
 specialist AI agents running concurrently, collects their structured outputs, and
@@ -14,6 +14,10 @@ local LLM (llama.cpp, Ollama, LM Studio).
 Points five specialist agents at your staged changes or a diff. Each agent runs
 concurrently on each changed file, produces structured findings, and the results are
 aggregated into a single formatted review.
+
+A deliberation pass runs after the specialist agents complete. It groups findings
+by location, detects when multiple agents flag the same line, and enriches each
+finding with a confidence score and corroboration or conflict metadata before rendering.
 
 **Agents:**
 
@@ -147,7 +151,7 @@ options:
   --diff FILE           Review a diff file (use - for stdin)
   --agents LIST         Comma-separated list of agents to run: logic,security,style,tests,docs
   --provider {anthropic,local}
-                        LLM provider (default: anthropic)
+                        LLM provider (default: value of DEFAULT_PROVIDER in .env)
   --format {full,compact}
                         Output format (default: full)
   --workers WORKERS     Max concurrent agent threads (default: 10)
@@ -157,7 +161,7 @@ options:
 ### Common invocations
 
 ```bash
-# Review staged changes
+# Review staged changes (most common)
 git add myfile.py
 review-pr
 
@@ -182,7 +186,7 @@ review-pr --provider local
 # Use Anthropic for this run (overrides DEFAULT_PROVIDER)
 review-pr --provider anthropic
 
-# Compact one-line output — good for CI
+# Compact one-line output — good for CI scripts
 review-pr --format compact
 
 # Debug logging — shows which agents ran, token counts, timing
@@ -201,22 +205,29 @@ review-pr --verbose
 
 ```
 PR Review
-reviewed 2 file(s) · 10 agent runs · 4,821 tokens · 3.2s
+  reviewed 2 file(s) · 10 agent runs · 4,821 tokens · 3.2s
+  deliberation: 2 corroborated · 1 conflicted
 
 auth/token.py  1 error(s), 2 warning(s)
 ────────────────────────────────────────────────────────────
-  ✗ ERROR  auth/token.py:14  [🔒 security]
+  ✗ ERROR  auth/token.py:14  [🔒 security]  [2 agents agree]
   Possible hardcoded secret detected in added code
-    +API_KEY = "sk-abc***"
   → Move secrets to environment variables or a secrets manager
+    +API_KEY = "sk-abc***"
 
   ⚠ WARNING  auth/token.py:22  [🧠 logic]
   Token expiry check uses local time but JWT validates UTC
   → Use datetime.utcnow() or datetime.now(timezone.utc)
+  ⚡ conflicts with style (they rated this lower severity)
 
 ────────────────────────────────────────────────────────────
 ✗ REVIEW REQUIRED  1 error(s) · 2 warning(s) · 1 info
 ```
+
+The `[2 agents agree]` badge appears when multiple agents independently flag the
+same line at the same severity — a stronger signal than a single-agent finding.
+The `⚡ conflicts with` marker means agents disagree on severity; both positions
+are shown so the reviewer can weigh them.
 
 ### Switching providers
 
@@ -238,20 +249,54 @@ git diff / diff file
   parse_diff()         splits into per-file diffs, skips binary/generated files
        │
        ▼
-  supervisor           fans out to all (file × agent) pairs concurrently
+  supervisor — Phase 1: concurrent specialist analysis
   ┌────┴────────────────────────────────────────┐
   │  ThreadPoolExecutor — one thread per pair   │
   │                                             │
   │  logic    security    style    tests    docs│
   │  logic    security    style    tests    docs│  ← one row per file
   └────┬────────────────────────────────────────┘
-       │  each returns AgentResult(findings=[Finding, ...])
+       │  findings written to SharedFindingStore as agents complete
        ▼
-  aggregator           merges, deduplicates, sorts by severity then file
-       │
+  supervisor — Phase 2: deliberation
+  ┌────┴────────────────────────────────────────┐
+  │  group findings by (file, line)             │
+  │  corroboration: same line, same severity    │  → confidence rises
+  │  conflict:      same line, diff severity    │  → both positions flagged
+  │  enrich each finding with confidence score  │
+  └────┬────────────────────────────────────────┘
+       │  enriched findings sorted by severity then corroboration
        ▼
   renderer             CLI (colour terminal) or GitHub PR comment (stub)
 ```
+
+### Phase 1 — Concurrent specialist analysis
+
+Each `(file × agent)` pair is an independent unit of work submitted to a
+`ThreadPoolExecutor`. Agents run concurrently and write findings to a
+`SharedFindingStore` as they complete. A failure in one agent does not affect
+the others — it produces an empty result and is logged.
+
+### Phase 2 — Deliberation
+
+After all agents finish, the supervisor runs a deliberation pass over the
+`SharedFindingStore`. For every `(file, line)` flagged by more than one agent:
+
+- **Corroboration** — agents agree on severity → confidence rises, badge shown
+- **Conflict** — agents disagree on severity → both findings flagged with `⚡`
+
+Each finding is enriched with three fields before rendering:
+
+| Field | Meaning |
+|---|---|
+| `confidence` | `0.5` (one agent) → `0.75` (two agree) → `0.95` (three or more) |
+| `corroborated_by` | Names of other agents that flagged the same line at the same severity |
+| `conflicts_with` | Names of agents that flagged the same line at a different severity |
+
+The deliberation function has a fixed signature designed as an extraction point.
+When a dedicated consensus service is needed, the supervisor passes the same
+arguments through a request/response transport instead of a direct call —
+nothing else changes.
 
 ### Data contract between agents
 
@@ -271,8 +316,25 @@ class Finding:
 ```
 
 The supervisor stamps `agent` onto each finding — agents don't need to know
-their own name. The renderer never needs to call into an agent. These three
-concerns — analysis, coordination, presentation — stay completely separated.
+their own name. The renderer never calls into an agent. Analysis, coordination,
+and presentation stay completely separated.
+
+### SharedFindingStore
+
+The `SharedFindingStore` in `shared/finding_store.py` is the shared state layer
+between Phase 1 and Phase 2. It is an append-only, thread-safe log:
+
+```python
+store = SharedFindingStore()
+store.append(finding)              # called by supervisor as each agent completes
+store.hot_lines()                  # [(file, line, count)] sorted by agent count desc
+store.by_line("auth.py", 14)      # all agents that flagged line 14
+store.by_agent("security")        # all findings from the security agent
+```
+
+Findings are immutable once appended. The deliberation phase reads the log and
+derives enriched state from it — the same append-only pattern used in event
+sourcing systems.
 
 ### File tree
 
@@ -281,11 +343,13 @@ multi-agent-tools/
 │
 ├── shared/                         # shared across both tools
 │   ├── llm.py                      # multi-provider LLM wrapper (Anthropic + OpenAI-compat)
-│   └── findings.py                 # Finding dataclass — the agent output contract
+│   ├── findings.py                 # Finding + AgentResult dataclasses — agent output contract
+│   └── finding_store.py            # SharedFindingStore + EnrichedFinding — Phase 2 shared state
 │
 ├── pr_review/                      # PR review tool
 │   ├── __main__.py                 # CLI entry point (argparse, .env loading)
-│   ├── supervisor.py               # diff parser, fan-out orchestrator, aggregator
+│   ├── supervisor.py               # diff parser, two-phase orchestrator, aggregator
+│   ├── deliberation.py             # Phase 2: corroboration + conflict detection
 │   ├── agents/
 │   │   ├── logic.py                # logic & correctness (uses Sonnet)
 │   │   ├── security.py             # secrets + vulnerability scan (uses Sonnet)
@@ -294,7 +358,7 @@ multi-agent-tools/
 │   │   └── docs.py                 # documentation gaps (uses Haiku)
 │   └── renderers/
 │       ├── cli.py                  # colour terminal output
-│       └── github.py               # GitHub PR comment (stub — v0.2)
+│       └── github.py               # GitHub PR comment (stub — v0.3)
 │
 ├── codeqa/                         # codebase Q&A tool (v0.2)
 │   └── __init__.py
@@ -348,9 +412,21 @@ time-sensitive fix. The exit code contract (`1` on errors, `0` on warnings-only)
 lets you enforce this in CI without configuration.
 
 **Why does `security.py` prescan with regex before calling the LLM?** Speed and
-reliability. A `sk-...` pattern in a diff is unambiguously a secret — no
-reasoning required. The prescan catches it in microseconds and the finding is
-already in hand even if the LLM call fails, times out, or hits a rate limit.
+reliability. A `sk-...` pattern in a diff is unambiguously a secret — no reasoning
+required. The prescan catches it in microseconds and the finding is already in hand
+even if the LLM call fails, times out, or hits a rate limit.
+
+**Why is deliberation in the supervisor, not a separate agent?** Clean interface
+now, easy extraction later. The `deliberate()` function signature is fixed:
+`(store, config, agent_runners) -> list[EnrichedFinding]`. When a dedicated
+consensus service is needed, the body is replaced with a request/response call
+and nothing else changes — not the supervisor, not the agents, not the renderer.
+
+**Why does corroboration raise confidence rather than deduplicate?** Two agents
+independently flagging the same line is stronger evidence than one agent flagging
+it. Deduplication would throw that signal away. The confidence score lets the
+renderer weight corroborated findings differently and lets downstream automation
+threshold on confidence rather than severity alone.
 
 ---
 
@@ -360,6 +436,8 @@ already in hand even if the LLM call fails, times out, or hits a rate limit.
   the terminal. Semantic search + AST-based lookup + dependency tracing.
 - **v0.3** — GitHub renderer: post findings as inline PR review comments via the
   GitHub API, with a summary comment on the PR itself.
+- **v0.3** — Deliberation Phase 2b: ask conflicting agents to reconsider before
+  the final report is generated, using the request/response pattern.
 - **v0.4** — SQLite backend for `ask-codebase`: replace the file-based index with
   `sqlite-vec` for vector search. Same interface, persistent and queryable.
 - **v0.5** — Incremental indexing: only re-embed files that changed since the last
@@ -376,4 +454,6 @@ never raise. Adding a new specialist agent means:
 2. Register it in `pr_review/supervisor.py` in the `AGENTS` list
 3. Add an icon for it in `pr_review/renderers/cli.py` in `AGENT_ICON`
 
-No other files need to change.
+No other files need to change. The deliberation phase picks up findings from any
+registered agent automatically — there is nothing to configure in `deliberation.py`.
+

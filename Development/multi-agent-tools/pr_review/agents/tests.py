@@ -8,12 +8,17 @@ Looks for:
   - New branches (if/else, try/except) not covered by tests
   - Changed behaviour in existing functions without updated tests
   - Tests that exist but don't assert anything meaningful
-  - Missing edge case tests (empty input, None, boundary values)
+  - Missing edge case tests (empty input, None, zero, negative numbers,
+    boundary values)
+  - Error paths that have no test verifying they raise correctly
   - Test files that don't follow the project's naming convention
 
 This agent is aware that test files are often separate from
 implementation files. It looks at the diff as a whole to reason
 about whether tests were added alongside new behaviour.
+
+Only flags gaps in the ADDED or CHANGED code. Does not flag pre-existing
+untested code unless the diff touched it.
 """
 
 from __future__ import annotations
@@ -37,6 +42,12 @@ You review unified diffs. Focus on:
 1. New functions, methods, or classes with no test
 2. New code paths (branches, error handling) not covered by tests
 3. Changed behaviour that existing tests may no longer correctly verify
+4. Edge cases not covered (empty input, None, zero, negative numbers,
+   boundary values)
+5. Error paths that have no test verifying they raise correctly
+
+Only flag gaps in the ADDED or CHANGED code. Do not flag pre-existing
+untested code unless the diff touched it.
 
 Be practical. Not everything needs a test. But public APIs,
 business logic, and error handling paths almost always do.
@@ -48,7 +59,7 @@ Each finding:
   "severity": "warning" | "info",
   "line": <integer or null>,
   "message": "<what is untested and why it matters>",
-  "suggestion": "<what test cases should be added>",
+  "suggestion": "<what test cases should be added — be specific about the scenario>",
   "context": "<the untested code>"
 }"""
 
@@ -100,6 +111,9 @@ def run(
         findings = parse_findings_from_json(resp.content, filename)
         for f in findings:
             f.agent = ROLE
+            # Tests agent can only emit warning/info — downgrade any errors
+            if f.severity == "error":
+                f.severity = "warning"
 
         duration = time.time() - start
         log.debug("[tests] %s — %d finding(s) in %.1fs", filename, len(findings), duration)
@@ -111,3 +125,4 @@ def run(
         duration = time.time() - start
         log.error("[tests] failed on %s: %s", filename, exc)
         return AgentResult(agent=ROLE, ok=False, findings=[], error=str(exc), duration=duration)
+
