@@ -55,7 +55,49 @@ npm install
 
 ## Usage
 
-### Process all qualifying issues
+### Preview what will happen (no writes)
+
+```bash
+npx ts-node src/run.ts --plan
+npx ts-node src/run.ts --plan --issue IT-123
+```
+
+Runs all read-only phases (triage, diagnostics, OOO detection) and prints a plan table showing the intended action for each issue — close, OOO, or remediate — with the evidence behind each decision. Nothing is written to Linear or Jamf. Use this to review before executing.
+
+Example output:
+```
+═══ Plan — 3 issue(s) ═══
+
+IT-6393  COMPANY-ISSUE-NAME
+  → CLOSE     step 2
+               uptime=32d (✓ need≥31) | checkin=2026-06-15 0.1d (✓) | inventory=2026-06-15 0.1d (✓)
+               Comment: ✅ Uptime ≥ 30 days — check-in and inventory are current...
+
+IT-6401  COMPANY-ISSUE-NAME
+  → OOO       Slack: :pto: Vacationing - Back on Mon 6/20
+               New title: "[Back 2026-06-20] COMPANY-ISSUE-NAME Computer Status Check" | Due: 2026-06-20
+
+IT-6405  COMPANY-ISSUE-NAME
+  → REMEDIATE  john.doe@COMPANY.com
+               live checkin=2026-06-07 (196h ago ✗) | live inventory=2026-06-07 (197h ago ✗)
+               Queue: 2 failed, 3 pending
+               Likely: flush 2 failed → cancel 3 pending → blank push
+
+To execute with interactive approval:
+  ! npx ts-node src/run.ts
+  ! npx ts-node src/run.ts --issue IT-123
+```
+
+### Execute with interactive approval
+
+Run from the Claude Code prompt using `!` so you can approve each action as it appears:
+
+```
+! npx ts-node src/run.ts
+! npx ts-node src/run.ts --issue IT-123
+```
+
+### Process all qualifying issues (non-interactive)
 
 ```bash
 npx ts-node src/run.ts
@@ -67,7 +109,7 @@ npx ts-node src/run.ts
 npx ts-node src/run.ts --issue IT-123
 ```
 
-### Batch mode (auto-approve non-destructive actions)
+### Batch mode (auto-approve all actions)
 
 ```bash
 npx ts-node src/run.ts --batch
