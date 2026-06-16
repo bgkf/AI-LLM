@@ -87,14 +87,14 @@ export async function evaluateSelfResolved(issue: ParsedIssue): Promise<TriageRe
   const general = inventory.results[0].general;
   const liveCheckin = new Date(general.lastContactTime);
   const liveInventory = new Date(general.reportDate);
-  const checkinHoursAgo = daysBetween(liveCheckin, new Date()) * 24;
-  const inventoryHoursAgo = daysBetween(liveInventory, new Date()) * 24;
-  const checkinFresh = checkinHoursAgo < 24;
-  const inventoryFresh = inventoryHoursAgo < 24;
+  const checkinDaysAgo = daysBetween(liveCheckin, new Date());
+  const inventoryDaysAgo = daysBetween(liveInventory, new Date());
+  const checkinFresh = checkinDaysAgo < 1;
+  const inventoryFresh = inventoryDaysAgo < 1;
 
   const detail =
-    `live checkin=${fmtDate(liveCheckin)} (${checkinFresh ? "fresh ✓" : `${checkinHoursAgo.toFixed(0)}h ago ✗`}) | ` +
-    `live inventory=${fmtDate(liveInventory)} (${inventoryFresh ? "fresh ✓" : `${inventoryHoursAgo.toFixed(0)}h ago ✗`})`;
+    `live checkin=${fmtDate(liveCheckin)} (${checkinFresh ? "fresh ✓" : `${checkinDaysAgo.toFixed(1)}d ago ✗`}) | ` +
+    `live inventory=${fmtDate(liveInventory)} (${inventoryFresh ? "fresh ✓" : `${inventoryDaysAgo.toFixed(1)}d ago ✗`})`;
 
   if (checkinFresh && inventoryFresh) {
     return {

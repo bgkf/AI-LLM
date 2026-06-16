@@ -49,6 +49,8 @@ export interface OOOResult {
   returnDateSource: "slack" | "vacation_responder" | "calendar" | null;
   sourceDetail: string | null;
   suggestedTitlePrefix: string | null;
+  oktaStatus: string | null;
+  oktaLastSignin: string | null;
 }
 
 export interface RemediationResult {
@@ -61,11 +63,24 @@ export interface RemediationResult {
 
 export type IssueOutcome =
   | { kind: "closed-triage"; step: 1 | 2 | 3; comment: string }
+  | { kind: "closed-okta"; comment: string }
   | { kind: "ooo-open"; titleUpdated: string; dueDate: Date | null }
   | { kind: "self-resolved"; remediation: RemediationResult; comment: string }
   | { kind: "remediation-taken"; remediation: RemediationResult; comment: string }
   | { kind: "escalation"; remediation: RemediationResult; comment: string }
   | { kind: "skipped"; reason: string };
+
+export interface PlanRow {
+  issueId: string;
+  title: string;
+  linearUrl: string;
+  plannedAction:
+    | { kind: "close-triage"; step: 1 | 2 | 3; detail: string; comment: string }
+    | { kind: "close-okta"; oktaStatus: string; comment: string }
+    | { kind: "ooo"; sourceDetail: string | null; newTitle: string; newDueDate: string | undefined }
+    | { kind: "remediate"; triageDetail: string; email: string; failedCommands: number; pendingCommands: number; activeFailureModes: Array<"INVENTORY" | "CHECKIN">; oktaStatus: string | null; oktaLastSignin: string | null }
+    | { kind: "error"; reason: string };
+}
 
 export interface IssueSummaryRow {
   issueId: string;

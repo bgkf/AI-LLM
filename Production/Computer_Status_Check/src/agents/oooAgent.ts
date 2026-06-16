@@ -14,11 +14,12 @@ You have access to four data sources. Check them in this order:
    Check profile.status_text for: "OOO", "Out of Office", "Vacation", "PTO", or a return date.
    Check profile.status_emoji for travel/vacation emoji: :palm_tree: :airplane: :beach_with_umbrella: :desert_island:
    Parse return date from status_text if present (e.g. "OOO until June 20").
-4. Okta last sign-in — fallback only if all above are negative
+4. Okta — ALWAYS check, regardless of other signals (account status is required)
    The token is provided to you as OKTA_API_TOKEN in this prompt. Fetch via Bash:
    curl -s -H "Authorization: SSWS {OKTA_API_TOKEN}" -H "Accept: application/json" \\
      "https://COMPANY.okta.com/api/v1/users?q={email}&limit=1"
    Read response[0].lastLogin (ISO 8601 timestamp, or null if never logged in).
+   Read response[0].status (STAGED | PROVISIONED | ACTIVE | RECOVERY | PASSWORD_EXPIRED | LOCKED_OUT | DEPROVISIONED).
 
 IMPORTANT:
 - GAM is aliased to /Users/USERNAME/bin/gam7/gam
@@ -27,6 +28,7 @@ IMPORTANT:
 - The Okta token is provided in this prompt — use it verbatim in the curl Authorization header
 - If signals conflict, weight them: vacation_responder > calendar > slack > okta
 - Okta inactivity alone is not OOO — it is a weak signal, note it but don't close on it
+- Always populate oktaStatus and oktaLastSignin even when isOOO is false
 
 Return ONLY a JSON object — no preamble, no markdown fences:
 {
@@ -34,11 +36,12 @@ Return ONLY a JSON object — no preamble, no markdown fences:
   "returnDate": "YYYY-MM-DD" | null,
   "returnDateSource": "vacation_responder" | "calendar" | "slack" | null,
   "sourceDetail": "exact text or description of the confirming signal, e.g. 'Slack status: :pto: Vacationing - Back on Mon 6/15' or 'GAM vacation responder active until 2026-06-20'" | null,
+  "oktaStatus": "STAGED" | "PROVISIONED" | "ACTIVE" | "RECOVERY" | "PASSWORD_EXPIRED" | "LOCKED_OUT" | "DEPROVISIONED" | null,
+  "oktaLastSignin": "YYYY-MM-DD" | null,
   "evidence": {
     "vacationResponderActive": boolean,
     "calendarOOOFound": boolean,
     "slackOOOFound": boolean,
-    "oktaLastSignin": "YYYY-MM-DD" | null,
     "oktaActive": boolean | null
   },
   "suggestedTitlePrefix": "[Back YYYY-MM-DD]" | "[OOO]" | null
@@ -84,5 +87,7 @@ export async function detectOOO(
     returnDateSource: parsed.returnDateSource,
     sourceDetail: parsed.sourceDetail ?? null,
     suggestedTitlePrefix: parsed.suggestedTitlePrefix,
+    oktaStatus: parsed.oktaStatus ?? null,
+    oktaLastSignin: parsed.oktaLastSignin ?? null,
   };
 }

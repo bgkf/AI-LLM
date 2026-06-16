@@ -1,9 +1,11 @@
-import type { IssueSummaryRow, IssueOutcome } from "./types";
+import type { IssueSummaryRow, IssueOutcome, PlanRow } from "./types";
 
 function outcomeLabel(o: IssueOutcome): string {
   switch (o.kind) {
     case "closed-triage":
       return `Closed (triage step ${o.step})`;
+    case "closed-okta":
+      return `Closed (Okta Staged)`;
     case "ooo-open":
       return `OOO — title → "${o.titleUpdated}"`;
     case "self-resolved":
@@ -20,6 +22,7 @@ function outcomeLabel(o: IssueOutcome): string {
 function outcomeBucket(o: IssueOutcome): string {
   switch (o.kind) {
     case "closed-triage":
+    case "closed-okta":
     case "self-resolved":
       return "closed";
     case "ooo-open":
@@ -68,5 +71,77 @@ export function buildSummaryTable(rows: IssueSummaryRow[]): string {
   }
 
   lines.push(`Total: ${rows.length} issue(s) processed.`);
+  return lines.join("\n");
+}
+
+function renderPlanRow(row: PlanRow): string[] {
+  const lines: string[] = [];
+  const a = row.plannedAction;
+
+  if (a.kind === "close-triage") {
+    lines.push(`  ${row.issueId}  ${row.title}`);
+    if (a.detail)  lines.push(`    ${a.detail}`);
+    if (a.comment) lines.push(`    Comment: ${a.comment}`);
+  } else if (a.kind === "close-okta") {
+    lines.push(`  ${row.issueId}  ${row.title}`);
+    lines.push(`    Okta status: ${a.oktaStatus}`);
+    lines.push(`    Comment: ${a.comment}`);
+  } else if (a.kind === "ooo") {
+    lines.push(`  ${row.issueId}  ${row.title}`);
+    if (a.sourceDetail) lines.push(`    Source: ${a.sourceDetail}`);
+    lines.push(`    New title: "${a.newTitle}"${a.newDueDate ? ` | Due: ${a.newDueDate}` : ""}`);
+  } else if (a.kind === "remediate") {
+    lines.push(`  ${row.issueId}  ${row.title}  (${a.email})`);
+    if (a.triageDetail) lines.push(`    ${a.triageDetail}`);
+    const oktaParts = [
+      a.oktaStatus ? `status=${a.oktaStatus}` : null,
+      a.oktaLastSignin ? `lastSignin=${a.oktaLastSignin}` : "lastSignin=never",
+    ].filter(Boolean);
+    lines.push(`    Okta: ${oktaParts.join(", ")}`);
+    const steps: string[] = [];
+    if (a.failedCommands > 0) steps.push(`flush ${a.failedCommands} failed`);
+    if (a.pendingCommands > 0) steps.push(`cancel ${a.pendingCommands} pending`);
+    steps.push("blank push");
+    if (a.activeFailureModes.length > 0) steps.push(`[modes: ${a.activeFailureModes.join(", ")}]`);
+    lines.push(`    Likely: ${steps.join(" → ")}`);
+  } else if (a.kind === "error") {
+    lines.push(`  ${row.issueId}  ${row.title}`);
+    lines.push(`    ${a.reason}`);
+  }
+
+  return lines;
+}
+
+export function buildPlanTable(rows: PlanRow[]): string {
+  if (rows.length === 0) return "No qualifying issues found.";
+
+  const groups: Record<PlanRow["plannedAction"]["kind"], PlanRow[]> = {
+    "close-triage": [],
+    "close-okta": [],
+    ooo: [],
+    remediate: [],
+    error: [],
+  };
+  for (const row of rows) groups[row.plannedAction.kind].push(row);
+
+  const lines: string[] = [`═══ Plan — ${rows.length} issue(s) ═══`, ""];
+
+  const sections: Array<[PlanRow["plannedAction"]["kind"], string]> = [
+    ["close-triage", "CLOSE"],
+    ["close-okta",   "CLOSE (Staged Okta account)"],
+    ["ooo",          "OOO"],
+    ["remediate",    "REMEDIATE"],
+    ["error",        "ERROR"],
+  ];
+
+  for (const [kind, label] of sections) {
+    const group = groups[kind];
+    if (group.length === 0) continue;
+    lines.push(`── ${label} (${group.length}) ──`);
+    for (const row of group) lines.push(...renderPlanRow(row));
+    lines.push("");
+  }
+
+  lines.push(`Total: ${rows.length} issue(s)`);
   return lines.join("\n");
 }
