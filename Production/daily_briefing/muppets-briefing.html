@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Daily Briefing — Thursday, August 6</title>
+<style>
+    :root {
+        --bg: #1a1a2e;
+        --card: #16213e;
+        --text: #e0e0e0;
+        --muted: #888;
+        --accent: #4fc3f7;
+        --border: #2a2a4a;
+    }
+    @media (prefers-color-scheme: light) {
+        :root {
+            --bg: #f5f5f5;
+            --card: #ffffff;
+            --text: #1a1a1a;
+            --muted: #666;
+            --accent: #0277bd;
+            --border: #e0e0e0;
+        }
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, "SF Pro", system-ui, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        padding: 2rem;
+        max-width: 720px;
+        margin: 0 auto;
+    }
+    h1 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+    }
+    .date {
+        color: var(--muted);
+        font-size: 0.9rem;
+        margin-bottom: 1.5rem;
+    }
+    .section {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 1.25rem;
+        margin-bottom: 1rem;
+    }
+    h2 {
+        font-size: 1rem;
+        font-weight: 600;
+        margin-bottom: 0.75rem;
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    tr { border-bottom: 1px solid var(--border); }
+    tr:last-child { border-bottom: none; }
+    td {
+        padding: 0.5rem 0.5rem 0.5rem 0;
+        vertical-align: top;
+        font-size: 0.9rem;
+    }
+    .time {
+        white-space: nowrap;
+        color: var(--accent);
+        font-weight: 500;
+        min-width: 140px;
+    }
+    .issue-id {
+        font-family: "SF Mono", monospace;
+        color: var(--accent);
+        font-size: 0.85rem;
+        white-space: nowrap;
+    }
+    td a {
+        color: inherit;
+        text-decoration: none;
+        border-bottom: 1px dotted var(--muted);
+    }
+    td a:hover {
+        border-bottom-color: var(--accent);
+    }
+    .due {
+        color: var(--muted);
+        white-space: nowrap;
+        font-size: 0.85rem;
+    }
+    .tag {
+        display: inline-block;
+        font-size: 0.75rem;
+        padding: 0.1rem 0.4rem;
+        border-radius: 4px;
+        margin-left: 0.4rem;
+        vertical-align: middle;
+    }
+    .zoom { background: #1a56db; color: #fff; }
+    .status { background: var(--border); color: var(--text); }
+    .attendees {
+        color: var(--muted);
+        font-size: 0.85rem;
+        margin-left: 0.4rem;
+    }
+    .conflict {
+        margin-top: 0.5rem;
+        padding: 0.5rem;
+        background: rgba(255, 152, 0, 0.15);
+        border-radius: 6px;
+        font-size: 0.85rem;
+    }
+    ul {
+        list-style: none;
+        padding: 0;
+    }
+    li {
+        padding: 0.4rem 0;
+        border-bottom: 1px solid var(--border);
+        font-size: 0.9rem;
+    }
+    li:last-child { border-bottom: none; }
+    .empty { color: var(--muted); font-size: 0.9rem; }
+    .errors { border-color: #c62828; }
+    .generated {
+        text-align: center;
+        color: var(--muted);
+        font-size: 0.75rem;
+        margin-top: 1.5rem;
+    }
+</style>
+</head>
+<body>
+    <h1>Today — Thursday, August 6</h1>
+    
+        <div class="section">
+            <h2>📅 Calendar</h2>
+            <table><tr><td class="time">9:00 AM–9:15 AM</td><td><a href="https://www.google.com/calendar/event?eid=muppettheater-standup">Muppet Theater Daily Stand-up</a> <span class="attendees">Kermit, Fozzie, Gonzo, Scooter</span></td></tr><tr><td class="time">10:00 AM–11:00 AM</td><td><a href="https://www.google.com/calendar/event?eid=piggy-wardrobe-fitting">Wardrobe Fitting — Miss Piggy</a> <span class="attendees">Miss Piggy, Wardrobe Dept.</span></td></tr><tr><td class="time">11:30 AM–12:30 PM</td><td><a href="https://www.google.com/calendar/event?eid=fraggle-tunnel-inspection">Fraggle Rock Tunnel Safety Inspection</a> <span class="attendees">Gobo, Mokey, Wembley, Boober</span></td></tr><tr><td class="time">12:00 PM–1:00 PM</td><td><a href="https://www.google.com/calendar/event?eid=lunch-with-rizzo">Lunch with Rizzo</a> <span class="attendees">Rizzo the Rat</span></td></tr><tr><td class="time">1:00 PM–1:30 PM</td><td><a href="https://www.google.com/calendar/event?eid=swedish-chef-safety-review">Swedish Chef — Kitchen Safety Review</a> <span class="attendees">Swedish Chef, Health Inspector</span></td></tr><tr><td class="time">3:00 PM–3:45 PM</td><td><a href="https://www.google.com/calendar/event?eid=elmos-world-taping">Elmo's World — Taping Session</a> <span class="tag zoom">Zoom</span> <span class="attendees">Elmo, Mr. Noodle</span></td></tr><tr><td class="time">4:00 PM–4:30 PM</td><td><a href="https://www.google.com/calendar/event?eid=oscar-trash-audit">Oscar the Grouch — Trash Compactor Audit</a> <span class="attendees">Oscar the Grouch, Facilities</span></td></tr></table>
+            <div class="conflict">⚠️ Lunch with Rizzo overlaps Fraggle Rock Tunnel Safety Inspection</div>
+        </div>
+        <div class="section">
+            <h2>🎯 Linear — Due This Week</h2>
+            <table><tr><td class="issue-id"><a href="https://linear.app/muppets/issue/MUP-101/kermits-banjo-needs-restringing">MUP-101</a></td><td>Kermit's banjo needs restringing before Rainbow Connection reprise</td><td><span class="tag status">Todo</span></td><td class="due">due 2026-08-07</td></tr><tr><td class="issue-id"><a href="https://linear.app/muppets/issue/MUP-102/miss-piggy-karate-reimbursement">MUP-102</a></td><td>Miss Piggy demands karate class reimbursement</td><td><span class="tag status">In Review</span></td><td class="due">due 2026-08-08</td></tr><tr><td class="issue-id"><a href="https://linear.app/muppets/issue/MUP-103/patch-hole-in-oscars-trash-can-lid">MUP-103</a></td><td>Patch hole in Oscar's trash can lid</td><td><span class="tag status">Todo</span></td><td class="due">due 2026-08-08</td></tr><tr><td class="issue-id"><a href="https://linear.app/muppets/issue/MUP-104/swedish-chef-subtitles-missing">MUP-104</a></td><td>Swedish Chef microphone translation subtitles missing</td><td><span class="tag status">Todo</span></td><td class="due">due 2026-08-09</td></tr><tr><td class="issue-id"><a href="https://linear.app/muppets/issue/MUP-105/gonzo-cannon-safety-inspection">MUP-105</a></td><td>Gonzo's human cannonball safety inspection overdue</td><td><span class="tag status">Todo</span></td><td class="due">due 2026-08-09</td></tr><tr><td class="issue-id"><a href="https://linear.app/muppets/issue/MUP-106/elmo-more-crayons">MUP-106</a></td><td>Elmo requesting more crayons for Elmo's World segment</td><td><span class="tag status">Todo</span></td><td class="due">due 2026-08-10</td></tr><tr><td class="issue-id"><a href="https://linear.app/muppets/issue/MUP-107/cookie-monster-snack-budget">MUP-107</a></td><td>Cookie Monster snack budget overrun — Q3</td><td><span class="tag status">In Review</span></td><td class="due">due 2026-08-11</td></tr><tr><td class="issue-id"><a href="https://linear.app/muppets/issue/MUP-108/big-bird-nest-wifi-outage">MUP-108</a></td><td>Big Bird's nest WiFi outage on Sesame Street</td><td><span class="tag status">Todo</span></td><td class="due">due 2026-08-12</td></tr><tr><td class="issue-id"><a href="https://linear.app/muppets/issue/MUP-109/statler-waldorf-heckling-complaint">MUP-109</a></td><td>Statler and Waldorf heckling complaint from balcony box</td><td><span class="tag status">Todo</span></td><td class="due">due 2026-08-13</td></tr><tr><td class="issue-id"><a href="https://linear.app/muppets/issue/MUP-110/animal-drum-kit-noise-complaint">MUP-110</a></td><td>Animal's drum kit noise complaint from neighboring dressing room</td><td><span class="tag status">Todo</span></td><td class="due">due 2026-07-28</td></tr></table>
+        </div>
+        <div class="section">
+            <h2>📝 Notion — Updated Recently</h2>
+            <ul><li>The Muppet Show — Episode 217 Rundown</li><li>Sesame Street Season Planning — 1-2-3 Count With Me Revamp</li></ul>
+        </div>
+        <div class="section">
+            <h2>💬 Slack Saves</h2>
+            <ul><li><strong>#muppet-theater</strong> — @Fozzie: Wocka wocka! Tonight's joke of the day is ready for review 😂</li><li><strong>#sesame-street-writers</strong> — @Big Bird: Can we get Snuffleupagus officially confirmed as real in the script? 🦔</li></ul>
+        </div>
+    
+    <div class="generated">Generated 9:43 AM PT</div>
+</body>
+</html>

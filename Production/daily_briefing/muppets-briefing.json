@@ -1,0 +1,183 @@
+{
+  "target_date": "2026-08-06",
+  "target_label": "Today",
+  "target_display": "Thursday, August 6",
+  "calendar": [
+    {
+      "time": "9:00 AM–9:15 AM",
+      "title": "Muppet Theater Daily Stand-up",
+      "attendees": [
+        "Kermit",
+        "Fozzie",
+        "Gonzo",
+        "Scooter"
+      ],
+      "zoom": false,
+      "html_link": "https://www.google.com/calendar/event?eid=muppettheater-standup"
+    },
+    {
+      "time": "10:00 AM–11:00 AM",
+      "title": "Wardrobe Fitting — Miss Piggy",
+      "attendees": [
+        "Miss Piggy",
+        "Wardrobe Dept."
+      ],
+      "zoom": false,
+      "html_link": "https://www.google.com/calendar/event?eid=piggy-wardrobe-fitting"
+    },
+    {
+      "time": "11:30 AM–12:30 PM",
+      "title": "Fraggle Rock Tunnel Safety Inspection",
+      "attendees": [
+        "Gobo",
+        "Mokey",
+        "Wembley",
+        "Boober",
+        "Red"
+      ],
+      "zoom": false,
+      "html_link": "https://www.google.com/calendar/event?eid=fraggle-tunnel-inspection"
+    },
+    {
+      "time": "12:00 PM–1:00 PM",
+      "title": "Lunch with Rizzo",
+      "attendees": [
+        "Rizzo the Rat"
+      ],
+      "zoom": false,
+      "html_link": "https://www.google.com/calendar/event?eid=lunch-with-rizzo"
+    },
+    {
+      "time": "1:00 PM–1:30 PM",
+      "title": "Swedish Chef — Kitchen Safety Review",
+      "attendees": [
+        "Swedish Chef",
+        "Health Inspector"
+      ],
+      "zoom": false,
+      "html_link": "https://www.google.com/calendar/event?eid=swedish-chef-safety-review"
+    },
+    {
+      "time": "3:00 PM–3:45 PM",
+      "title": "Elmo's World — Taping Session",
+      "attendees": [
+        "Elmo",
+        "Mr. Noodle"
+      ],
+      "zoom": true,
+      "html_link": "https://www.google.com/calendar/event?eid=elmos-world-taping"
+    },
+    {
+      "time": "4:00 PM–4:30 PM",
+      "title": "Oscar the Grouch — Trash Compactor Audit",
+      "attendees": [
+        "Oscar the Grouch",
+        "Facilities"
+      ],
+      "zoom": false,
+      "html_link": "https://www.google.com/calendar/event?eid=oscar-trash-audit"
+    }
+  ],
+  "linear": [
+    {
+      "id": "MUP-101",
+      "title": "Kermit's banjo needs restringing before Rainbow Connection reprise",
+      "status": "Todo",
+      "due": "2026-08-07",
+      "url": "https://linear.app/muppets/issue/MUP-101/kermits-banjo-needs-restringing"
+    },
+    {
+      "id": "MUP-102",
+      "title": "Miss Piggy demands karate class reimbursement",
+      "status": "In Review",
+      "due": "2026-08-08",
+      "url": "https://linear.app/muppets/issue/MUP-102/miss-piggy-karate-reimbursement"
+    },
+    {
+      "id": "MUP-103",
+      "title": "Patch hole in Oscar's trash can lid",
+      "status": "Todo",
+      "due": "2026-08-08",
+      "url": "https://linear.app/muppets/issue/MUP-103/patch-hole-in-oscars-trash-can-lid"
+    },
+    {
+      "id": "MUP-104",
+      "title": "Swedish Chef microphone translation subtitles missing",
+      "status": "Todo",
+      "due": "2026-08-09",
+      "url": "https://linear.app/muppets/issue/MUP-104/swedish-chef-subtitles-missing"
+    },
+    {
+      "id": "MUP-105",
+      "title": "Gonzo's human cannonball safety inspection overdue",
+      "status": "Todo",
+      "due": "2026-08-09",
+      "url": "https://linear.app/muppets/issue/MUP-105/gonzo-cannon-safety-inspection"
+    },
+    {
+      "id": "MUP-106",
+      "title": "Elmo requesting more crayons for Elmo's World segment",
+      "status": "Todo",
+      "due": "2026-08-10",
+      "url": "https://linear.app/muppets/issue/MUP-106/elmo-more-crayons"
+    },
+    {
+      "id": "MUP-107",
+      "title": "Cookie Monster snack budget overrun — Q3",
+      "status": "In Review",
+      "due": "2026-08-11",
+      "url": "https://linear.app/muppets/issue/MUP-107/cookie-monster-snack-budget"
+    },
+    {
+      "id": "MUP-108",
+      "title": "Big Bird's nest WiFi outage on Sesame Street",
+      "status": "Todo",
+      "due": "2026-08-12",
+      "url": "https://linear.app/muppets/issue/MUP-108/big-bird-nest-wifi-outage"
+    },
+    {
+      "id": "MUP-109",
+      "title": "Statler and Waldorf heckling complaint from balcony box",
+      "status": "Todo",
+      "due": "2026-08-13",
+      "url": "https://linear.app/muppets/issue/MUP-109/statler-waldorf-heckling-complaint"
+    },
+    {
+      "id": "MUP-110",
+      "title": "Animal's drum kit noise complaint from neighboring dressing room",
+      "status": "Todo",
+      "due": "2026-07-28",
+      "url": "https://linear.app/muppets/issue/MUP-110/animal-drum-kit-noise-complaint"
+    }
+  ],
+  "notion": [
+    {
+      "title": "The Muppet Show — Episode 217 Rundown",
+      "updated": "2026-08-05",
+      "url": "https://notion.so/muppet-show-episode-217-rundown"
+    },
+    {
+      "title": "Sesame Street Season Planning — 1-2-3 Count With Me Revamp",
+      "updated": "2026-08-04",
+      "url": "https://notion.so/sesame-street-count-with-me-revamp"
+    }
+  ],
+  "slack": [
+    {
+      "channel": "muppet-theater",
+      "user": "Fozzie",
+      "text": "Wocka wocka! Tonight's joke of the day is ready for review 😂",
+      "url": "https://slack.com/archives/muppet-theater/fozzie-joke"
+    },
+    {
+      "channel": "sesame-street-writers",
+      "user": "Big Bird",
+      "text": "Can we get Snuffleupagus officially confirmed as real in the script? 🦔",
+      "url": "https://slack.com/archives/sesame-street-writers/snuffy-confirmed"
+    }
+  ],
+  "errors": [],
+  "conflicts": [
+    "Lunch with Rizzo overlaps Fraggle Rock Tunnel Safety Inspection"
+  ]
+}
